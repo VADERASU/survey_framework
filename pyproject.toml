@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "survey-framework"
+version = "0.1.0"
+description = ""
+authors = ["Rostyslav Hnatyshyn <rostyslav.hnatyshyn@gmail.com>"]
+readme = "README.md"
+packages = [{include = "extract", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+toml = "^0.10.2"
+typeguard = "^3.0.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pyright = "^1.1.302"
+black = "^23.3.0"
+flake8 = "^6.0.0"
+isort = "^5.12.0"
+pytest = "^7.3.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

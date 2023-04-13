@@ -1,0 +1,8 @@
+[SectionA.SubSection1]
+images = ['1','2','3','4']
+
+[SectionB.SubSection1]
+images = ['5','2','6','4']
+
+[SectionC]
+images = ['1']
