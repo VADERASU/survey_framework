@@ -7,7 +7,7 @@ from extract import utils
 
 
 @pytest.fixture
-def sample_path():
+def valid_directory():
     return Path(os.path.abspath("tests/sample_data"))
 
 
@@ -16,8 +16,13 @@ def invalid_dir_not_exist():
     return Path(os.path.abspath("tests/sample_datad"))
 
 
-def test_check_directory_valid(sample_path):
-    utils.check_directory(sample_path)
+@pytest.fixture
+def valid_file():
+    return Path(os.path.abspath("tests/sample_data/metadata.toml"))
+
+
+def test_check_directory_valid(valid_directory):
+    utils.check_directory(valid_directory)
 
 
 def test_check_directory_not_exist(invalid_dir_not_exist):
@@ -25,32 +30,36 @@ def test_check_directory_not_exist(invalid_dir_not_exist):
         utils.check_directory(invalid_dir_not_exist)
 
 
-@pytest.fixture
-def valid_args():
-    parser = utils.build_parser()
-    return parser.parse_args(["tests/sample_data"])
+def test_check_directory_with_file(valid_file):
+    with pytest.raises(ValueError):
+        utils.check_directory(valid_file)
 
 
-@pytest.fixture
-def invalid_args():
-    parser = utils.build_parser()
-    return parser.parse_args(["tests/sample_datad"])
+def test_build_directory():
+    utils.build_directory("tests/sample_data")
 
 
-def test_check_args(valid_args):
-    utils.check_args(valid_args)
+def test_build_directory_empty():
+    with pytest.raises(ValueError):
+        utils.build_directory("")
 
 
-def test_check_args_invalid(invalid_args):
+def test_join_file(valid_directory):
+    utils.join_file(valid_directory, "metadata.toml")
+
+
+def test_join_file_not_exist(valid_directory):
     with pytest.raises(FileNotFoundError):
-        utils.check_args(invalid_args)
+        utils.join_file(valid_directory, "asdfas")
 
 
-@pytest.fixture
-def valid_directory(valid_args):
-    return utils.check_args(valid_args)
+def test_join_file_not_file(valid_directory):
+    with pytest.raises(ValueError):
+        utils.join_file(valid_directory, "images")
 
 
-def test_load_toml(valid_directory):
-    d = utils.load_toml(valid_directory)
-    print(d)
+def test_extract_paper_from_image():
+    f1 = "paper_1"
+    f2 = "p_aper_2"
+    assert utils.extract_paper_from_image(f1) == "paper"
+    assert utils.extract_paper_from_image(f2) == "p_aper"

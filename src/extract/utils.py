@@ -55,6 +55,21 @@ def join_directory(directory: Path, dir_name: str) -> Path:
 
 
 @typechecked
+def build_directory(path: Union[Path, str]):
+    """
+    Builds an absolute path from a string.
+
+    :param path: The name of the path.
+    :raises ValueError: If the path was empty.
+    """
+    if path == "":
+        raise ValueError("Specified path was empty.")
+    directory = Path(os.path.abspath(path))
+    check_directory(directory)
+    return directory
+
+
+@typechecked
 def join_file(directory: Path, f_name: str) -> Path:
     """
     Given a directory and string, returns a Path to the file associated with
@@ -77,10 +92,11 @@ def join_file(directory: Path, f_name: str) -> Path:
 
 
 def check_args(args):
-    directory = Path(os.path.abspath(args.directory))
-    image_directory = Path(os.path.abspath(args.image_directory))
-    check_directory(directory)
-    check_directory(image_directory)
+    """
+    Checks args from arg_parse.
+    """
+    directory = build_directory(args.directory)
+    image_directory = build_directory(args.image_directory)
     return directory, image_directory
 
 
