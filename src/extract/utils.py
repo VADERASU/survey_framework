@@ -1,16 +1,17 @@
 import argparse
 import os
 import re
-import shutil
 from pathlib import Path
 from typing import Union
 
-import bibtexparser
-import toml
 from typeguard import typechecked
 
 
-def get_api_directory():
+def get_api_image_dir():
+    """
+    Assumes that the image directory for the back-end will be in
+    ../../api/images
+    """
     source = Path(__file__).resolve()
     return source.parent.parent.joinpath("api").joinpath("images")
 
@@ -18,13 +19,19 @@ def get_api_directory():
 def build_parser():
     parser = argparse.ArgumentParser(prog="SurveyPaperExtractor")
     parser.add_argument("directory")
-    parser.add_argument("-i", "--image-directory", default=get_api_directory())
+    parser.add_argument("-i", "--image-directory", default=get_api_image_dir())
     return parser
 
 
-# why not return directory here?
 @typechecked
 def check_directory(directory: Path):
+    """
+    Check if directory exists and is a directory.
+
+    :param directory: Path to directory to check.
+    :raises FileNotFoundError: Raised if directory does not exist.
+    :raises ValueError: Raised if directory is not a directory.
+    """
     if not directory.exists():
         raise FileNotFoundError(f"{directory} does not exist.")
 
@@ -33,52 +40,40 @@ def check_directory(directory: Path):
 
 
 @typechecked
-def not_found(directory: Path, description: str):
-    raise FileNotFoundError(f"{directory} does not contain {description}")
+def join_directory(directory: Path, dir_name: str) -> Path:
+    """
+    Given a directory and string, returns a Path to the directory associated
+    with the string.
 
-
-@typechecked
-def load_toml(directory: Path):
-    p = directory.joinpath("metadata.toml")
-    if not p.exists():
-        not_found(directory, "metadata.toml")
-    return toml.load(p)
-
-
-@typechecked
-def load_bibtex(directory: Path):
-    p = directory.joinpath("papers.bib")
-    if not p.exists():
-        not_found(directory, "papers.bib")
-    data = None
-    with open(p) as bib_tex:
-        data = bibtexparser.load(bib_tex)
-    return data
-
-
-# TODO: test, move to metadata?
-@typechecked
-def load_images(directory: Path, image_directory: Path):
-    p = directory.joinpath("images")
+    :param directory: The directory to join to.
+    :param dir_name: Name of the directory.
+    :return: Path to dir_name.
+    """
+    p = directory.joinpath(dir_name)
     check_directory(p)
-    img_types = ("jpg", "jpeg", "png", "gif")
-    extracted = {}
-    for img_type in img_types:
-        images = list(p.glob(f"**/*.{img_type}"))
-        for image in images:
-            if image.is_file():
-                shutil.copy2(image, image_directory)
-                f_name = os.path.basename(image)
-                paper = extract_paper_from_image(f_name)
-                extracted[f_name] = {
-                    "keywords": [],
-                    "paper": paper,
-                }
+    return p
 
-    if len(extracted) == 0:
-        raise ValueError(f"{p} was empty.")
 
-    return extracted
+@typechecked
+def join_file(directory: Path, f_name: str) -> Path:
+    """
+    Given a directory and string, returns a Path to the file associated with
+    the string.
+
+    :param directory: The directory to join to.
+    :param f_name: Name of the file.
+    :return: Path to f_name.
+    :raises FileNotFoundError: Raised if file does not exist.
+    :raises ValueError: Raised if path does not point to file.
+    """
+    p = directory.joinpath(f_name)
+    if not p.exists():
+        raise FileNotFoundError(f"{directory} does not contain {f_name}")
+
+    if not p.is_file():
+        raise ValueError(f"{f_name} is not a file.")
+
+    return p
 
 
 def check_args(args):
@@ -89,12 +84,15 @@ def check_args(args):
     return directory, image_directory
 
 
-def extract_paper_from_image(f_name: Union[Path, str]):
+@typechecked
+def extract_paper_from_image(f_name: Union[Path, str]) -> str:
     """
-    images should be named
-    {citation_key}{_ID}
-    _ID is optional and is only used to
-    prevent naming conflicts in the filesystem
+    Determines an image's associated paper from its filename.
+    Images should be named {citation_key}{_ID} _ID is optional
+    and is only used to prevent naming conflicts in the filesystem.
+
+    :param f_name: The filename to extract.
+    :returns: Name of the paper associated with the image.
     """
 
     name, _ = os.path.splitext(f_name)

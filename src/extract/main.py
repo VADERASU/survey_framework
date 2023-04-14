@@ -1,13 +1,13 @@
-from extract import metadata, utils
+from extract import utils, data
 
 if __name__ == "__main__":
     parser = utils.build_parser()
     args = parser.parse_args()
     dir, img_dir = utils.check_args(args)
 
-    raw_md = utils.load_toml(dir)
-    papers = utils.load_bibtex(dir)
-    images = utils.load_images(dir, img_dir)
+    raw_md = data.load_toml(dir)
+    papers = data.load_bibtex(dir)
+    images = data.load_images(dir, img_dir)
 
     # each section has children attribute only (maybe store icon file as well?)
 
@@ -17,13 +17,7 @@ if __name__ == "__main__":
     # associated with it from the images
 
     # figures out the children of all metadata nodes
-    md = {}
-    for section in raw_md.keys():
-        s = metadata.process_section(
-            section, raw_md[section]
-        )  # header sections
-        md.update(**s)
-
+    md = data.process_metadata(raw_md)
     for image, image_md in images.items():
         # map image to keywords
         for keyword, keyword_md in md.items():
@@ -33,3 +27,5 @@ if __name__ == "__main__":
     print(papers.entries)
     print(images)
     print(md)
+
+    # TODO: import into MongoDB
