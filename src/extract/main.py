@@ -5,8 +5,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     dir = utils.check_args(args)
 
-    md = utils.load_toml(dir)
-    bibtexparser = utils.load_bibtex(dir)
+    raw_md = utils.load_toml(dir)
+    papers = utils.load_bibtex(dir)
     images = utils.load_images(dir)
 
     # now we have the taxonomy, a list of papers, and the images
@@ -20,8 +20,15 @@ if __name__ == "__main__":
     # associated with it from the images
 
     # figures out the children of all metadata nodes
-    processed = {}
-    for section in md.keys():
-        s = metadata.process_section(section, md[section])  # header sections
-        processed.update(**s)
-    print(processed)
+    md = {}
+    for section in raw_md.keys():
+        s = metadata.process_section(
+            section, raw_md[section]
+        )  # header sections
+        md.update(**s)
+
+    for image, image_md in images.items():
+        # map image to keywords
+        for keyword, keyword_md in md.items():
+            if image in keyword_md["images"]:
+                image_md["keywords"].append(keyword)

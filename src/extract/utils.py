@@ -1,5 +1,6 @@
 import argparse
 import os
+import re
 from pathlib import Path
 
 import bibtexparser
@@ -13,6 +14,7 @@ def build_parser():
     return parser
 
 
+# why not return directory here?
 @typechecked
 def check_directory(directory: Path):
     if not directory.exists():
@@ -47,6 +49,7 @@ def load_bibtex(directory: Path):
     return data
 
 
+# TODO: test, move to metadata?
 @typechecked
 def load_images(directory: Path):
     p = directory.joinpath("images")
@@ -59,7 +62,9 @@ def load_images(directory: Path):
             if image.is_file():
                 # copy over to api/images, get path
                 f_name = os.path.basename(image)
-                extracted[f_name] = {}
+                paper = extract_paper_from_image(f_name)
+                extracted[f_name] = {"keywords": [], "paper": paper}
+
     if len(extracted) == 0:
         raise FileNotFoundError(f"{p} was empty.")
 
@@ -70,3 +75,15 @@ def check_args(args):
     directory = Path(os.path.abspath(args.directory))
     check_directory(directory)
     return directory
+
+
+def extract_paper_from_image(f_name):
+    """
+    images should be named
+    {citation_key}{_ID}
+    _ID is optional and is only used to
+    prevent naming conflicts in the filesystem
+    """
+
+    name, _ = os.path.splitext(f_name)
+    return re.sub("_([^_]*)$", "", name)

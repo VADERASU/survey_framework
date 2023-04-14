@@ -3,6 +3,7 @@ def check_metadata():
     pass
 
 
+# TODO: test
 def process_section(section, value):
     children = []
     images = []
