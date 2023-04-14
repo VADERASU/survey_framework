@@ -1,7 +1,10 @@
-[SectionA.SubSection1]
+[SectionA.SubSectionA]
 images = ['1','2','3','4']
 
-[SectionB.SubSection1]
+[SectionA.SubSectionA.SubSubSectionA]
+images = ['1','8','19']
+
+[SectionB.SubSectionB]
 images = ['5','2','6','4']
 
 [SectionC]

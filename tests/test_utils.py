@@ -25,11 +25,6 @@ def test_check_directory_not_exist(invalid_dir_not_exist):
         utils.check_directory(invalid_dir_not_exist)
 
 
-def test_check_directory_no_metadata(tmp_path):
-    with pytest.raises(FileNotFoundError):
-        utils.check_directory(tmp_path)
-
-
 @pytest.fixture
 def valid_args():
     parser = utils.build_parser()

@@ -10,6 +10,7 @@ packages = [{include = "extract", from = "src"}]
 python = "^3.10"
 toml = "^0.10.2"
 typeguard = "^3.0.2"
+bibtexparser = "^1.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
