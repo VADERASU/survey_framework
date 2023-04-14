@@ -3,14 +3,11 @@ from extract import metadata, utils
 if __name__ == "__main__":
     parser = utils.build_parser()
     args = parser.parse_args()
-    dir = utils.check_args(args)
+    dir, img_dir = utils.check_args(args)
 
     raw_md = utils.load_toml(dir)
     papers = utils.load_bibtex(dir)
-    images = utils.load_images(dir)
-
-    # now we have the taxonomy, a list of papers, and the images
-    # set up the database
+    images = utils.load_images(dir, img_dir)
 
     # each section has children attribute only (maybe store icon file as well?)
 
@@ -32,3 +29,7 @@ if __name__ == "__main__":
         for keyword, keyword_md in md.items():
             if image in keyword_md["images"]:
                 image_md["keywords"].append(keyword)
+
+    print(papers.entries)
+    print(images)
+    print(md)
