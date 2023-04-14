@@ -1,4 +1,4 @@
-from extract import utils, data
+from extract import data, utils
 
 if __name__ == "__main__":
     parser = utils.build_parser()
@@ -18,6 +18,7 @@ if __name__ == "__main__":
 
     # figures out the children of all metadata nodes
     md = data.process_metadata(raw_md)
+    # TODO: move into its own function, write tests
     for image, image_md in images.items():
         # map image to keywords
         for keyword, keyword_md in md.items():
