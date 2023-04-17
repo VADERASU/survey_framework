@@ -1,15 +1,18 @@
+"""
+Wrapper around a pymongo.Database object to populate the database with the data
+from the extraction script. Will add support for querying the database.
+"""
+
 from datetime import datetime
 from typing import Any, Dict
 
-from bson import ObjectId
 from pymongo.database import Database
 
 from extract import data
+from extract.data import Image, MetadataDict
 
 
 class MongoWrapper(Database):
-    cite_key_to_id: Dict[str, ObjectId]
-
     def __init__(self, database):
         self.database = database
         self.database.papers.create_index("cite_key")
@@ -29,6 +32,12 @@ class MongoWrapper(Database):
         return cite_key_to_id
 
     def add_papers(self, papers: Dict[str, Any]):
+        """
+        Adds papers from a dictionary. The keys will become
+        the cite_key field in the database.
+
+        :param papers: A regular dictionary.
+        """
         for cite_key, paper_data in papers.items():
             self.papers.update_one(
                 {"cite_key": cite_key},
@@ -42,22 +51,53 @@ class MongoWrapper(Database):
                 upsert=True,
             )
 
-    def populate(self, papers, md, images):
+    def populate(
+        self,
+        papers: Dict[str, Any],
+        md: MetadataDict,
+        images: Dict[str, Image],
+        survey_name: str = "survey",
+    ):
+        """
+        Populates the database.
+
+        :param papers: Papers dictionary to insert.
+        :param md: Metadata dictionary to insert.
+        :param images: Image dictionary to insert.
+        :param survey_name: Name of the survey to insert.
+        """
         self.add_papers(papers)
-        self.add_metadata(md)
+        self.add_metadata(md, survey_name)
         self.add_images(images)
 
-    def add_metadata(self, metadata):
+    def add_metadata(self, metadata: MetadataDict, survey_name: str):
+        """
+        Adds a metadata dictionary to the database.
+
+        :param metadata: Metadata dictionary to insert.
+        :param survey_name: Name of the survey it will relate to.
+        """
         document = data.build_hierarchy(metadata)
-        # TODO: allow naming of survey
-        # db.metadata.aggregate([{$unwind: '$hierarchy'}])
         self.metadata.update_one(
-            {"survey": "survey"},
-            {"$set": {"hierarchy": document, "survey": "survey"}},
+            {"survey": survey_name},
+            {"$set": {"hierarchy": document, "survey": survey_name}},
             upsert=True,
         )
 
-    def add_images(self, images):
+    def get_metadata_hierarchy(self, survey_name: str = "survey"):
+        """
+        Gets the metadata hierarchy.
+        """
+        return self.metadata.aggregate(
+            [{"$match": survey_name}, {"$unwind": "$hierarchy"}]
+        )
+
+    def add_images(self, images: Dict[str, Image]):
+        """
+        Adds images to database.
+
+        :param images: Dictionary of strings to Images.
+        """
         cite_keys = self.__get_cite_key_to_id()
         for filename, image in images.items():
             paper_ref = cite_keys[image["paper"]]

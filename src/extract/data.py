@@ -40,6 +40,11 @@ def check_metadata(
 
 
 def get_header_sections(metadata: MetadataDict):
+    """
+    Gets the top level sections from the metadata dictionary.
+
+    :param metadata: The metadata dictionary.
+    """
     names = list(metadata.keys())
     children = []
     for data in metadata.values():
@@ -49,7 +54,13 @@ def get_header_sections(metadata: MetadataDict):
     return list(filter(lambda e: e not in children, names))
 
 
-def nest(metadata, header):
+def nest(metadata: MetadataDict, header: str):
+    """
+    Returns a header as an object containing its children nested and its name.
+
+    :param metadata: Metadata dictionary.
+    :param header: The name of the section.
+    """
     children = metadata[header]["children"]
     data = []
     for child in children:
@@ -61,6 +72,11 @@ def nest(metadata, header):
 
 
 def build_hierarchy(metadata: MetadataDict):
+    """
+    Builds a hierarchy from the metadata dictionary.
+
+    :param metadata: A metadata dictionary.
+    """
     headers = get_header_sections(metadata)
     document = []
     for header in headers:
