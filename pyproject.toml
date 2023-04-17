@@ -4,14 +4,15 @@ version = "0.1.0"
 description = ""
 authors = ["Rostyslav Hnatyshyn <rostyslav.hnatyshyn@gmail.com>"]
 readme = "README.md"
-packages = [{include = "extract", from = "src"}]
+packages = [{include = "extract", from = "src"},
+            {include = "database", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 toml = "^0.10.2"
 typeguard = "^3.0.2"
 bibtexparser = "^1.4.0"
-
+pymongo = "^4.3.3"
 
 [tool.poetry.group.dev.dependencies]
 pyright = "^1.1.302"
