@@ -1,7 +1,7 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional, TypedDict
+from typing import Any, Dict, List, TypedDict
 
 import bibtexparser
 import toml
@@ -11,7 +11,7 @@ from extract import utils
 
 
 class Metadata(TypedDict):
-    parent: Optional[str]
+    children: List[str]
     images: List[str]
 
 
@@ -39,6 +39,35 @@ def check_metadata(
             raise ValueError(f"Duplicate metadata tag found: {new_section}.")
 
 
+def get_header_sections(metadata: MetadataDict):
+    names = list(metadata.keys())
+    children = []
+    for data in metadata.values():
+        for name in names:
+            if name in data["children"]:
+                children.append(name)
+    return list(filter(lambda e: e not in children, names))
+
+
+def nest(metadata, header):
+    children = metadata[header]["children"]
+    data = []
+    for child in children:
+        if len(metadata[child]["children"]) > 0:
+            data.append({"name": child, "children": nest(metadata, child)})
+        else:
+            data.append({"name": child, "children": []})
+    return data
+
+
+def build_hierarchy(metadata: MetadataDict):
+    headers = get_header_sections(metadata)
+    document = []
+    for header in headers:
+        document.append({"name": header, "children": nest(metadata, header)})
+    return document
+
+
 @typechecked
 def process_metadata(metadata: Dict[str, Any]) -> MetadataDict:
     """
@@ -58,7 +87,8 @@ def process_metadata(metadata: Dict[str, Any]) -> MetadataDict:
 
 @typechecked
 def process_section(
-    section: str, value: Dict[str, Any], parent: Optional[str] = None
+    section: str,
+    value: Dict[str, Any],
 ) -> MetadataDict:
     """
     Given a metadata section, traverse through the nested dictionary to
@@ -66,20 +96,21 @@ def process_section(
 
     :param section: Name of the header section.
     :param value: The dictionary associated with the section.
-    :param parent: Optional, passed to children to identify parent metadata
-    section.
     :return: A dictionary of strings to Metadata objects.
     """
     images = []
     sections = {}
+    children = []
     for key in value.keys():
         if key == "images":
-            images = value[key]
+            images.extend(value[key])
         else:
-            s_sections = process_section(key, value[key], section)
+            s_sections = process_section(key, value[key])
             sections.update(**s_sections)
+            children.append(key)
+            images.extend(s_sections[key]["images"])
 
-    sections[section] = {"parent": parent, "images": images}
+    sections[section] = {"children": children, "images": images}
     return sections
 
 
