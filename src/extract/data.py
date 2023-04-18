@@ -40,6 +40,7 @@ class Image(TypedDict):
     paper: str
 
 
+# validate?
 @typechecked
 def load_images(directory: Path, destination: Path) -> Dict[str, Image]:
     """

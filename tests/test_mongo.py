@@ -11,6 +11,11 @@ def mw():
 
 
 # TODO: make more robust
-def test_get_metadata_hierarchy(mw):
-    r = mw.get_metadata_hierarchy()
+def test_get_metadata(mw):
+    r = mw.get_metadata("survey")
     print(r)
+
+
+def test_get_metadata_not_exist(mw):
+    with pytest.raises(ValueError):
+        mw.get_metadata("asdfasdfhio")

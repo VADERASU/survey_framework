@@ -37,8 +37,16 @@ class MongoWrapper(Database):
             cite_key_to_id[cite_key] = object_id
         return cite_key_to_id
 
+    # TODO: get all images associated with a survey
+    def get_images(self):
+        pass
+
+    # TODO: get all papers
+    def get_papers(self):
+        pass
+
     @typechecked
-    def add_papers(self, papers: Dict[str, Any]):
+    def add_papers(self, papers: Dict[str, Any], survey_name: str):
         """
         Adds papers from a dictionary. The keys will become
         the cite_key field in the database.
@@ -54,6 +62,9 @@ class MongoWrapper(Database):
                         **paper_data,
                         "cite_key": cite_key,
                         # "last_modified": datetime.utcnow(),
+                    },
+                    "$addToSet": {
+                        "surveys": survey_name
                     }
                 },
                 upsert=True,
@@ -67,7 +78,7 @@ class MongoWrapper(Database):
         papers: Dict[str, Any],
         md: MetadataTree,
         images: Dict[str, Image],
-        survey_name: str = "survey",
+        survey_name: str,
         print_statistics: bool = True,
     ):
         """
@@ -80,9 +91,9 @@ class MongoWrapper(Database):
         :param print_statistics: Whether or not to print statistics.
         Default true.
         """
-        p_up, p_in = self.add_papers(papers)
+        p_up, p_in = self.add_papers(papers, survey_name)
         m_up, m_in = self.add_metadata(md, survey_name)
-        i_up, i_in = self.add_images(images)
+        i_up, i_in = self.add_images(images, survey_name)
 
         if print_statistics:
             print(f"Update statistics for {survey_name}:\n")
@@ -120,13 +131,20 @@ class MongoWrapper(Database):
         return self.__count_results([r])
 
     @typechecked
-    def get_metadata_hierarchy(self, survey_name: str = "survey"):
+    def get_metadata(self, survey_name: str):
         """
         Gets the metadata hierarchy for the specified survey.
 
         :param: The name of the survey.
         """
-        return self.metadata.find_one({"survey": survey_name})["hierarchy"]
+        md = self.metadata.find_one({"survey": survey_name})
+
+        if md is None:
+            raise ValueError(
+                f"Metadata for survey {survey_name} does not exist."
+            )
+        # need a function that rebuilds this as a Metadata tree
+        return md["hierarchy"]
 
     @typechecked
     def __count_results(self, results: List[UpdateResult]):
@@ -141,7 +159,7 @@ class MongoWrapper(Database):
         return updated, inserted
 
     @typechecked
-    def add_images(self, images: Dict[str, Image]):
+    def add_images(self, images: Dict[str, Image], survey_name):
         """
         Adds images to database. Returns how many were updated or
         inserted.
@@ -160,6 +178,9 @@ class MongoWrapper(Database):
                         "filename": filename,
                         "keywords": keywords,
                         "paper": paper_ref,
+                    },
+                    "$addToSet": {
+                        "surveys": survey_name
                     }
                 },
                 upsert=True,
