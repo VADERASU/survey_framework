@@ -28,10 +28,14 @@ def load_toml(directory: Path):
 # TODO: validate?
 @typechecked
 def load_bibtex(directory: Path):
-    p = utils.join_file(directory, "papers.bib")
     data = None
-    with open(p) as bib_tex:
-        data = bibtexparser.load(bib_tex)
+    try:
+        p = utils.join_file(directory, "papers.bib")
+        with open(p) as bib_tex:
+            data = bibtexparser.load(bib_tex)
+    except FileNotFoundError:
+        print("papers.bib not found. Looking for papers in database.")
+
     return data
 
 

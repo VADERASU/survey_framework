@@ -25,9 +25,9 @@ class MongoWrapper(Database):
     def __getattr__(self, attr):
         return getattr(self.database, attr)
 
-    def __get_cite_key_to_id(self):
+    def get_cite_key_to_id(self, survey_name: str):
         """
-        Gets a mapping of object IDs to paper titles.
+        Gets a mapping of paper titles to object IDs.
         """
         collection = self.database.papers.find({})
         cite_key_to_id = {}
@@ -79,7 +79,6 @@ class MongoWrapper(Database):
     @typechecked
     def populate(
         self,
-        papers: Dict[str, Any],
         md: MetadataTree,
         images: Dict[str, Image],
         survey_name: str,
@@ -95,13 +94,10 @@ class MongoWrapper(Database):
         :param print_statistics: Whether or not to print statistics.
         Default true.
         """
-        p_up, p_in = self.add_papers(papers, survey_name)
         m_up, m_in = self.add_metadata(md, survey_name)
         i_up, i_in = self.add_images(images, survey_name)
 
         if print_statistics:
-            print(f"Update statistics for {survey_name}:\n")
-            print(f"Updated {p_up} and inserted {p_in} papers.")
             print(f"Updated {i_up} and inserted {i_in} images.")
             if m_up:
                 print("Metadata updated.")
@@ -163,14 +159,14 @@ class MongoWrapper(Database):
         return updated, inserted
 
     @typechecked
-    def add_images(self, images: Dict[str, Image], survey_name):
+    def add_images(self, images: Dict[str, Image], survey_name: str):
         """
         Adds images to database. Returns how many were updated or
         inserted.
 
         :param images: Dictionary of strings to Images.
         """
-        cite_keys = self.__get_cite_key_to_id()
+        cite_keys = self.get_cite_key_to_id(survey_name)
         results = []
         for filename, image in images.items():
             paper_ref = cite_keys[image["paper"]]
