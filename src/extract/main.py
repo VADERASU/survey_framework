@@ -13,6 +13,8 @@ if __name__ == "__main__":
     raw_md = data.load_toml(dir)
     papers = data.load_bibtex(dir)
     images = data.load_images(dir, img_dir)
+
+    # build a tree for the metadata hierarchy
     md = data.build_hierarchy(raw_md)
     data.map_image_keywords(images, md)
 
