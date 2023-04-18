@@ -7,6 +7,7 @@ from datetime import datetime
 from typing import Any, Dict
 
 from pymongo.database import Database
+from typeguard import typechecked
 
 from extract import data
 from extract.data import Image, MetadataDict
@@ -19,6 +20,7 @@ class MongoWrapper(Database):
         self.database.metadata.create_index("survey")
         self.database.images.create_index("filename")
 
+    # breaks with typechecking
     def __getattr__(self, attr):
         return getattr(self.database, attr)
 
@@ -31,6 +33,7 @@ class MongoWrapper(Database):
             cite_key_to_id[cite_key] = object_id
         return cite_key_to_id
 
+    @typechecked
     def add_papers(self, papers: Dict[str, Any]):
         """
         Adds papers from a dictionary. The keys will become
@@ -51,6 +54,7 @@ class MongoWrapper(Database):
                 upsert=True,
             )
 
+    @typechecked
     def populate(
         self,
         papers: Dict[str, Any],
@@ -70,6 +74,7 @@ class MongoWrapper(Database):
         self.add_metadata(md, survey_name)
         self.add_images(images)
 
+    @typechecked
     def add_metadata(self, metadata: MetadataDict, survey_name: str):
         """
         Adds a metadata dictionary to the database.
@@ -84,6 +89,7 @@ class MongoWrapper(Database):
             upsert=True,
         )
 
+    @typechecked
     def get_metadata_hierarchy(self, survey_name: str = "survey"):
         """
         Gets the metadata hierarchy.
@@ -92,6 +98,7 @@ class MongoWrapper(Database):
             [{"$match": survey_name}, {"$unwind": "$hierarchy"}]
         )
 
+    @typechecked
     def add_images(self, images: Dict[str, Image]):
         """
         Adds images to database.
