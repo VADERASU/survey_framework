@@ -77,36 +77,6 @@ class MongoWrapper(Database):
         return self.__count_results(results)
 
     @typechecked
-    def populate(
-        self,
-        md: MetadataTree,
-        images: Dict[str, Image],
-        survey_name: str,
-        print_statistics: bool = True,
-    ):
-        """
-        Populates the database.
-
-        :param papers: Papers dictionary to insert.
-        :param md: Metadata dictionary to insert.
-        :param images: Image dictionary to insert.
-        :param survey_name: Name of the survey to insert.
-        :param print_statistics: Whether or not to print statistics.
-        Default true.
-        """
-        m_up, m_in = self.add_metadata(md, survey_name)
-        i_up, i_in = self.add_images(images, survey_name)
-
-        if print_statistics:
-            print(f"Updated {i_up} and inserted {i_in} images.")
-            if m_up:
-                print("Metadata updated.")
-            else:
-                print(
-                    "Metadata inserted" if m_in else "Metadata not modified."
-                )
-
-    @typechecked
     def add_metadata(self, metadata: MetadataTree, survey_name: str):
         """
         Adds a metadata dictionary to the database.
