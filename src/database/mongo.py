@@ -3,7 +3,6 @@ Wrapper around a pymongo.Database object to populate the database with the data
 from the extraction script. Will add support for querying the database.
 """
 
-from datetime import datetime
 from typing import Any, Dict, List
 
 from pymongo.database import Database
@@ -62,7 +61,6 @@ class MongoWrapper(Database):
             results.append(r)
         return self.__count_results(results)
 
-    # TODO: add stats for each update / insertion
     @typechecked
     def populate(
         self,
@@ -70,7 +68,7 @@ class MongoWrapper(Database):
         md: MetadataTree,
         images: Dict[str, Image],
         survey_name: str = "survey",
-        print_statistics: bool = True
+        print_statistics: bool = True,
     ):
         """
         Populates the database.
@@ -93,7 +91,9 @@ class MongoWrapper(Database):
             if m_up:
                 print("Metadata updated.")
             else:
-                print("Metadata inserted" if m_in else "Metadata not modified.")
+                print(
+                    "Metadata inserted" if m_in else "Metadata not modified."
+                )
 
     @typechecked
     def add_metadata(self, metadata: MetadataTree, survey_name: str):
@@ -117,7 +117,7 @@ class MongoWrapper(Database):
             upsert=True,
         )
 
-        return self.__count_results([r]) 
+        return self.__count_results([r])
 
     @typechecked
     def get_metadata_hierarchy(self, survey_name: str = "survey"):

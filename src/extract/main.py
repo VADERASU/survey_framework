@@ -6,7 +6,8 @@ from database.mongo import MongoWrapper
 from extract import data, utils
 from extract.tree import MetadataTree
 
-if __name__ == "__main__":
+
+def main():
     parser = utils.build_parser()
     args = parser.parse_args()
     dir, img_dir = utils.check_args(args)
@@ -27,3 +28,7 @@ if __name__ == "__main__":
 
     db = MongoWrapper(client.surveys)
     db.populate(papers.entries_dict, md, images)
+
+
+if __name__ == "__main__":
+    main()
