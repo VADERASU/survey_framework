@@ -63,9 +63,7 @@ class MongoWrapper(Database):
                         "cite_key": cite_key,
                         # "last_modified": datetime.utcnow(),
                     },
-                    "$addToSet": {
-                        "surveys": survey_name
-                    }
+                    "$addToSet": {"surveys": survey_name},
                 },
                 upsert=True,
             )
@@ -176,12 +174,10 @@ class MongoWrapper(Database):
                 {
                     "$set": {
                         "filename": filename,
-                        "keywords": keywords,
+                        f"keywords.{survey_name}": keywords,
                         "paper": paper_ref,
                     },
-                    "$addToSet": {
-                        "surveys": survey_name
-                    }
+                    "$addToSet": {"surveys": survey_name},
                 },
                 upsert=True,
             )
