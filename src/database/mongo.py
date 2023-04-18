@@ -29,7 +29,7 @@ class MongoWrapper(Database):
         """
         Gets a mapping of paper titles to object IDs.
         """
-        collection = self.database.papers.find({})
+        collection = self.database.papers.find({"surveys": survey_name})
         cite_key_to_id = {}
         for paper in collection:
             object_id = paper["_id"]
@@ -166,10 +166,9 @@ class MongoWrapper(Database):
 
         :param images: Dictionary of strings to Images.
         """
-        cite_keys = self.get_cite_key_to_id(survey_name)
         results = []
         for filename, image in images.items():
-            paper_ref = cite_keys[image["paper"]]
+            paper_ref = image["paper"]
             keywords = image["keywords"]
             r = self.images.update_one(
                 {"filename": filename},

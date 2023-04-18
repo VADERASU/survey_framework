@@ -27,11 +27,12 @@ def main():
     if papers is not None:
         p_up, p_in = db.add_papers(papers.entries_dict, survey_name)
         print(f"Updated {p_up} and inserted {p_in} papers.")
+    ck = db.get_cite_key_to_id(survey_name)
+    images = data.load_images(dir, img_dir, ck)
 
     # if metadata is updated, need to have images
     # if images are updated, only need to check that all keywords are valid
     raw_md = data.load_toml(dir)
-    images = data.load_images(dir, img_dir)
 
     # build a tree for the metadata hierarchy
     md = MetadataTree(raw_md)

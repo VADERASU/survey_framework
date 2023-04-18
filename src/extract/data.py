@@ -1,8 +1,8 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Dict, List, TypedDict
-
+from typing import Any, Dict, List, TypedDict
+from bson import ObjectId
 import bibtexparser
 import toml
 from typeguard import typechecked
@@ -41,12 +41,13 @@ def load_bibtex(directory: Path):
 
 class Image(TypedDict):
     keywords: List[str]
-    paper: str
+    paper: ObjectId
 
 
-# validate?
 @typechecked
-def load_images(directory: Path, destination: Path) -> Dict[str, Image]:
+def load_images(
+    directory: Path, destination: Path, valid_papers: Dict[str, ObjectId]
+) -> Dict[str, Image]:
     """
     Loads images from {directory} and copies them to {destination}.
 
@@ -67,9 +68,14 @@ def load_images(directory: Path, destination: Path) -> Dict[str, Image]:
                 shutil.copy2(image, destination)
                 f_name = os.path.basename(image)
                 paper = utils.extract_paper_from_image(f_name)
+                if paper not in valid_papers.keys():
+                    raise ValueError(
+                        f"Paper {paper} does not exist in database."
+                    )
+
                 extracted[f_name] = {
                     "keywords": [],
-                    "paper": paper,
+                    "paper": valid_papers[paper],
                 }
 
     if len(extracted) == 0:
