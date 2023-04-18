@@ -20,6 +20,7 @@ def get_api_image_dir():
     return source.parent.parent.joinpath("api").joinpath("images")
 
 
+# TODO: add database name argument
 def build_parser():
     parser = argparse.ArgumentParser(prog="SurveyPaperExtractor")
     parser.add_argument("directory")

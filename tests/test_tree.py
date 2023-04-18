@@ -59,6 +59,7 @@ def test_get_keyword_images(t):
     im.sort()
     assert im == ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
+
 # TODO: make more robust
 def test_to_dict(t):
     d = t.to_dict()

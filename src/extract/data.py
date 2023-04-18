@@ -1,7 +1,7 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, TypedDict
+from typing import Dict, List, TypedDict
 
 import bibtexparser
 import toml
@@ -12,44 +12,20 @@ from extract.tree import MetadataTree
 
 
 class Metadata(TypedDict):
-    children: List[str]
     images: List[str]
 
 
 MetadataDict = Dict[str, Metadata]
 
 
-# TODO: should test initial metadata dictionary only
-@typechecked
-def check_metadata(
-    metadata: MetadataDict,
-):
-    """
-    Checks a newly created metadata dictionary for duplicates
-    in the existing one.
-
-    :param section: The newly created metadata dictionary.
-    :param metadata: The existing metadata dictionary we plan to add to.
-    :raises ValueError: Raised if duplicate section names exist.
-    """
-    pass
-
-
-def build_hierarchy(metadata: Dict[str, Any]):
-    """
-    Builds metadata tree for the given dictionary.
-
-    :param metadata: The metadata dictionary to process.
-    """
-    return MetadataTree(metadata)
-
-
+# TODO: validate metadata here? or let tree do it?
 @typechecked
 def load_toml(directory: Path):
     p = utils.join_file(directory, "metadata.toml")
     return toml.load(p)
 
 
+# TODO: validate?
 @typechecked
 def load_bibtex(directory: Path):
     p = utils.join_file(directory, "papers.bib")
@@ -100,6 +76,7 @@ def load_images(directory: Path, destination: Path) -> Dict[str, Image]:
     return extracted
 
 
+# TODO: make method of MetadataTree?
 def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
     """
     Maps images to their keywords using a Metadata tree.

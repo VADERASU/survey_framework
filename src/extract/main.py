@@ -4,6 +4,7 @@ from pymongo import MongoClient, errors
 
 from database.mongo import MongoWrapper
 from extract import data, utils
+from extract.tree import MetadataTree
 
 if __name__ == "__main__":
     parser = utils.build_parser()
@@ -15,7 +16,7 @@ if __name__ == "__main__":
     images = data.load_images(dir, img_dir)
 
     # build a tree for the metadata hierarchy
-    md = data.build_hierarchy(raw_md)
+    md = MetadataTree(raw_md)
     data.map_image_keywords(images, md)
 
     client = MongoClient(serverSelectionTimeoutMS=2000)
