@@ -8,6 +8,7 @@ import toml
 from typeguard import typechecked
 
 from extract import utils
+from extract.tree import MetadataTree
 
 
 class Metadata(TypedDict):
@@ -18,9 +19,9 @@ class Metadata(TypedDict):
 MetadataDict = Dict[str, Metadata]
 
 
+# TODO: should test initial metadata dictionary only
 @typechecked
 def check_metadata(
-    section: MetadataDict,
     metadata: MetadataDict,
 ):
     """
@@ -31,104 +32,16 @@ def check_metadata(
     :param metadata: The existing metadata dictionary we plan to add to.
     :raises ValueError: Raised if duplicate section names exist.
     """
-    new_sections = list(section.keys())
-    sections = list(metadata.keys())
-
-    for new_section in new_sections:
-        if new_section in sections:
-            raise ValueError(f"Duplicate metadata tag found: {new_section}.")
+    pass
 
 
-def get_header_sections(metadata: MetadataDict):
+def build_hierarchy(metadata: Dict[str, Any]):
     """
-    Gets the top level sections from the metadata dictionary.
+    Builds metadata tree for the given dictionary.
 
-    :param metadata: The metadata dictionary.
+    :param metadata: The metadata dictionary to process.
     """
-    names = list(metadata.keys())
-    children = []
-    for data in metadata.values():
-        for name in names:
-            if name in data["children"]:
-                children.append(name)
-    return list(filter(lambda e: e not in children, names))
-
-
-def nest(metadata: MetadataDict, header: str):
-    """
-    Returns a header as an object containing its children nested as a list of
-    objects and its name.
-
-    :param metadata: Metadata dictionary.
-    :param header: The name of the section.
-    """
-    children = metadata[header]["children"]
-    data = []
-    for child in children:
-        if len(metadata[child]["children"]) > 0:
-            data.append({"name": child, "children": nest(metadata, child)})
-        else:
-            data.append({"name": child, "children": []})
-    return data
-
-
-def build_hierarchy(metadata: MetadataDict):
-    """
-    Builds a hierarchy from the metadata dictionary.
-
-    :param metadata: A metadata dictionary.
-    """
-    headers = get_header_sections(metadata)
-    document = []
-    for header in headers:
-        document.append({"name": header, "children": nest(metadata, header)})
-    return document
-
-
-@typechecked
-def process_metadata(metadata: Dict[str, Any]) -> MetadataDict:
-    """
-    Builds a hierarchy based on the metadata passed from the TOML file.
-
-    :param metadata: TOML metadata.
-    :return: A dictionary of metadata keys to their values
-    which contain parents and images.
-    """
-    md = {}
-    for section in metadata.keys():
-        s = process_section(section, metadata[section])
-        check_metadata(s, md)
-        md.update(s)
-    return md
-
-
-@typechecked
-def process_section(
-    section: str,
-    value: Dict[str, Any],
-) -> MetadataDict:
-    """
-    Given a metadata section, traverse through the nested dictionary to
-    build its hierarchy.
-
-    :param section: Name of the header section.
-    :param value: The dictionary associated with the section.
-    :return: A dictionary of strings to Metadata objects.
-    """
-    images = []
-    sections = {}
-    children = []
-    for key in value.keys():
-        if key == "images":
-            images.extend(value[key])
-        else:
-            s_sections = process_section(key, value[key])
-            sections.update(**s_sections)
-            children.append(key)
-            images.extend(s_sections[key]["images"])
-
-    sections[section] = {"children": children, "images": images}
-    return sections
+    return MetadataTree(metadata)
 
 
 @typechecked
@@ -185,3 +98,18 @@ def load_images(directory: Path, destination: Path) -> Dict[str, Image]:
         )
 
     return extracted
+
+
+def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
+    """
+    Maps images to their keywords using a Metadata tree.
+
+    :param images: Dictionary of image file names to data.
+    :param md: MetadataTree; see tree.py
+    """
+    for image, image_md in images.items():
+        for keyword in md.all_nodes():
+            if keyword.tag != "root":
+                kw_images = md.get_keyword_images(keyword.tag)
+                if image in kw_images:
+                    image_md["keywords"].append(keyword.tag)

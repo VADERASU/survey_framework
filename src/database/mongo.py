@@ -10,7 +10,7 @@ from pymongo.database import Database
 from typeguard import typechecked
 
 from extract import data
-from extract.data import Image, MetadataDict
+from extract.data import Image
 
 
 class MongoWrapper(Database):
@@ -54,11 +54,10 @@ class MongoWrapper(Database):
                 upsert=True,
             )
 
-    @typechecked
     def populate(
         self,
         papers: Dict[str, Any],
-        md: MetadataDict,
+        md,
         images: Dict[str, Image],
         survey_name: str = "survey",
     ):
@@ -74,18 +73,22 @@ class MongoWrapper(Database):
         self.add_metadata(md, survey_name)
         self.add_images(images)
 
-    @typechecked
-    def add_metadata(self, metadata: MetadataDict, survey_name: str):
+    def add_metadata(self, metadata, survey_name: str):
         """
         Adds a metadata dictionary to the database.
 
         :param metadata: Metadata dictionary to insert.
         :param survey_name: Name of the survey it will relate to.
         """
-        document = data.build_hierarchy(metadata)
+
         self.metadata.update_one(
             {"survey": survey_name},
-            {"$set": {"hierarchy": document, "survey": survey_name}},
+            {
+                "$set": {
+                    "hierarchy": metadata.to_dict(),
+                    "survey": survey_name,
+                }
+            },
             upsert=True,
         )
 

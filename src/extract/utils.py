@@ -7,6 +7,10 @@ from typing import Union
 from typeguard import typechecked
 
 
+def section_names(d):
+    return list(filter(lambda e: e != "images", d.keys()))
+
+
 def get_api_image_dir():
     """
     Assumes that the image directory for the back-end will be in

@@ -13,15 +13,8 @@ if __name__ == "__main__":
     raw_md = data.load_toml(dir)
     papers = data.load_bibtex(dir)
     images = data.load_images(dir, img_dir)
-    # figures out the children of all metadata nodes
-    md = data.process_metadata(raw_md)
-
-    # TODO: move into its own function, write tests
-    for image, image_md in images.items():
-        # map image to keywords
-        for keyword, keyword_md in md.items():
-            if image in keyword_md["images"]:
-                image_md["keywords"].append(keyword)
+    md = data.build_hierarchy(raw_md)
+    data.map_image_keywords(images, md)
 
     client = MongoClient(serverSelectionTimeoutMS=2000)
     try:
