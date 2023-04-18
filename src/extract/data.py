@@ -56,7 +56,8 @@ def get_header_sections(metadata: MetadataDict):
 
 def nest(metadata: MetadataDict, header: str):
     """
-    Returns a header as an object containing its children nested and its name.
+    Returns a header as an object containing its children nested as a list of
+    objects and its name.
 
     :param metadata: Metadata dictionary.
     :param header: The name of the section.

@@ -1,4 +1,6 @@
-from pymongo import MongoClient
+import sys
+
+from pymongo import MongoClient, errors
 
 from database.mongo import MongoWrapper
 from extract import data, utils
@@ -21,6 +23,11 @@ if __name__ == "__main__":
             if image in keyword_md["images"]:
                 image_md["keywords"].append(keyword)
 
-    client = MongoClient()
+    client = MongoClient(serverSelectionTimeoutMS=2000)
+    try:
+        client.server_info()
+    except errors.ServerSelectionTimeoutError as err:
+        sys.exit(f"Error connecting to the database: {err}")
+
     db = MongoWrapper(client.surveys)
     db.populate(papers.entries_dict, md, images)
