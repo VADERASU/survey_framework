@@ -2,9 +2,10 @@ import os
 import shutil
 from pathlib import Path
 from typing import Any, Dict, List, TypedDict
-from bson import ObjectId
+
 import bibtexparser
 import toml
+from bson import ObjectId
 from typeguard import typechecked
 
 from extract import utils
@@ -44,6 +45,7 @@ class Image(TypedDict):
     paper: ObjectId
 
 
+# TODO: test image-paper validation
 @typechecked
 def load_images(
     directory: Path, destination: Path, valid_papers: Dict[str, ObjectId]
@@ -87,7 +89,7 @@ def load_images(
     return extracted
 
 
-# TODO: make method of MetadataTree?
+# TODO: make method of MetadataTree, test
 def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
     """
     Maps images to their keywords using a Metadata tree.
@@ -95,9 +97,18 @@ def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
     :param images: Dictionary of image file names to data.
     :param md: MetadataTree; see tree.py
     """
+    # remove root
+    nodes = list(filter(lambda n: n.tag != "root", md.all_nodes()))
     for image, image_md in images.items():
-        for keyword in md.all_nodes():
-            if keyword.tag != "root":
-                kw_images = md.get_keyword_images(keyword.tag)
-                if image in kw_images:
-                    image_md["keywords"].append(keyword.tag)
+        for keyword in nodes:
+            kw_images = md.get_keyword_images(keyword.tag)
+            if image in kw_images:
+                image_md["keywords"].append(keyword.tag)
+
+    # find any images that are missing keywords
+    missing = list(
+        filter(lambda k: len(images[k]["keywords"]) == 0, images.keys())
+    )
+
+    if len(missing) > 0:
+        raise ValueError(f"Images missing keywords: {missing}.")
