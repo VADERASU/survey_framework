@@ -37,13 +37,19 @@ class MongoWrapper(Database):
             cite_key_to_id[cite_key] = object_id
         return cite_key_to_id
 
-    # TODO: get all images associated with a survey
-    def get_images(self):
-        pass
+    def get_images(self, survey_name: str):
+        r = list(self.images.find({"surveys": survey_name}))
+        if len(r) == 0:
+            raise ValueError(f"No images found for survey {survey_name}.")
 
-    # TODO: get all papers
-    def get_papers(self):
-        pass
+        return list(r)
+
+    def get_papers(self, survey_name: str):
+        r = list(self.papers.find({"surveys": survey_name}))
+        if len(r) == 0:
+            raise ValueError(f"No papers found for survey {survey_name}.")
+
+        return list(r)
 
     @typechecked
     def add_papers(self, papers: Dict[str, Any], survey_name: str):
