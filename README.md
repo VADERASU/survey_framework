@@ -8,7 +8,7 @@ The goal is to have an API that sets itself up using the papers you provide.
 | Backend API | ☐   |
 | Frontend scaffolding | ☐ |
 
-## Extract ✔️
+## Extract 
 The extraction script, ran with `survey_extract`, reads a directory and extracts its contents to a mongoDB database.
 
 | flag  | description |
@@ -42,6 +42,7 @@ Otherwise, your subsections will be treated as main sections.
 ### papers.bib 
 Next to the `metadata.toml` file should be a `papers.bib` file. 
 This should be a bibtex file containing all of the papers you plan to reference.
+This file is optional if you are not adding any new papers to an existing database.
 
 ## Installation
 The easiest way to install this package is through [poetry](https://python-poetry.org/).

@@ -43,7 +43,7 @@ def main():
     if m_up:
         print("Metadata updated.")
     else:
-        print("Metadata inserted" if m_in else "Metadata not modified.")
+        print("Metadata inserted." if m_in else "Metadata not modified.")
 
     i_up, i_in = db.add_images(images, survey_name)
     print(f"Updated {i_up} and inserted {i_in} images.")

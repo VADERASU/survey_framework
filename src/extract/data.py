@@ -1,4 +1,5 @@
 import os
+
 import shutil
 from pathlib import Path
 from typing import Any, Dict, List, TypedDict
@@ -6,10 +7,9 @@ from typing import Any, Dict, List, TypedDict
 import bibtexparser
 import toml
 from bson import ObjectId
-from typeguard import typechecked
-
 from extract import utils
 from extract.tree import MetadataTree
+from typeguard import typechecked
 
 
 class Metadata(TypedDict):

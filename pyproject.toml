@@ -28,3 +28,18 @@ survey_extract = 'extract.main:main'
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 79
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pyright]
+include = ["src"]
+exclude = [ ".venv"]
+venvPath = "."
+venv = ".venv"
+
+executionEnviornments = [{ root = "src" }]
