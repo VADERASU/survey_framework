@@ -14,6 +14,8 @@ typeguard = "^3.0.2"
 bibtexparser = "^1.4.0"
 pymongo = "^4.3.3"
 treelib = "^1.6.4"
+fastapi = "^0.96.0"
+uvicorn = "^0.22.0"
 
 [tool.poetry.group.dev.dependencies]
 pyright = "^1.1.302"
