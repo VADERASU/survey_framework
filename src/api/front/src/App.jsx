@@ -24,6 +24,7 @@ function App() {
                 setImages(data.images);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
+                console.log(data.papers);
             }).catch((e) => {
                 alert(e);
             });
