@@ -14,13 +14,19 @@ function App() {
 
     useEffect(() => {
         fetch(`${API_URL}/get_db/survey`, { method: "GET" })
-            .then((response) => response.json())
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error("Something went wrong.");
+            })
             .then((data) => {
-                console.log(data);
                 setImages(data.images);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
-            })
+            }).catch((e) => {
+                alert(e);
+            });
     }, []);
 
     return (
