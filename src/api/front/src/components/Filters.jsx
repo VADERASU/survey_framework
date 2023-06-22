@@ -5,27 +5,25 @@ import Button from '@mui/material/Button';
 
 export default function Filters({ metadata, setFilter }) {
 
-    const buildChildren = (children) => {
-        return <>
-            {children.map((child) =>
-                <Stack key={child.name}>
-                    <Button color={child.name} onClick={() => setFilter(child.name)} variant="contained" key={child.name}>{child.name}</Button>
-                    <Box sx={{ display: 'flex' }}>
-                        {buildChildren(child.children)}
-                    </Box>
-                </Stack>
-            )}
-        </>
-    };
+    const buildChildren = (children) => <>
+        {children.map((child) =>
+            <Stack key={child.name}>
+                <Button color={child.name} onClick={() => setFilter(child.name)} variant="contained" key={child.name}>{child.name}</Button>
+                <Box sx={{ display: 'flex', gap: '5px' }}>
+                    {buildChildren(child.children)}
+                </Box>
+            </Stack>
+        )}
+    </>;
 
     if (metadata) {
         // ignore the root
         const sections = metadata.children;
-        return (<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        return (<Box sx={{ display: 'flex', gap: '10px' }}>
             {sections.map((section) =>
-            (<Box key={section.name} sx={{ backgroundColor: section.color }}>
+            (<Box key={section.name}>
                 <Typography variant="h5">{section.name}</Typography>
-                <Box sx={{ display: 'flex' }}>
+                <Box sx={{ display: 'flex', gap: '5px' }}>
                     <Button color={section.name}
                         onClick={() => setFilter(section.name)}
                         variant="contained">

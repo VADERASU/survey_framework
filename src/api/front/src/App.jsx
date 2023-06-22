@@ -4,11 +4,11 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import './App.css'
 
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { API_URL } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
 import Filters from './components/Filters';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function App() {
     const [images, setImages] = useState([]);
@@ -47,17 +47,17 @@ function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <Stack gap={2}>
+            <Stack gap={1} >
                 <Typography variant="h1">Survey</Typography>
                 <Filters metadata={metadata} setFilter={setFilter} />
-                <Grid container spacing={2}>
+                <Grid container gap={1}>
                     {images.filter((i) => {
                         if (filter !== null) {
                             return i.keywords.includes(filter);
                         }
                         return true;
                     }).map((i) =>
-                        <Grid key={i._id} item xs={4}>
+                        <Grid key={i._id} item>
                             <ImageCard data={i.data} onClick={() =>
                                 setSelected({
                                     thumbnail: i.data,
