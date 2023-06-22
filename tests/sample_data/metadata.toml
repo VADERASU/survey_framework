@@ -1,11 +1,19 @@
+[SectionA]
+color = "#5BEB34"
+
 [SectionA.SubSectionA]
 images = ['A.2023.P1_1.gif']
+color = "#ABCDEF"
 
 [SectionA.SubSectionB.SubSubSectionA]
 images = ['A.2023.P1_2.png', 'B.2023.P2.jpg']
+color = "#E534EB"
 
 [SectionA.SubSectionB.SubSubSectionB]
 images = ['C.2023.P3.jpg','D.2023.P4.png']
 
 [SectionB.SubSectionC]
 images = ['A.2023.P1_1.gif', 'A.2023.P1_2.png']
+
+[SectionB]
+color = "#EB3471"
