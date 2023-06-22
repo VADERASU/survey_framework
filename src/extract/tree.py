@@ -4,9 +4,9 @@ and has some utility functions.
 """
 import functools
 from typing import Any, Dict
-from typeguard import typechecked
 
 from treelib import Tree
+from typeguard import typechecked
 
 from extract.utils import section_names
 
@@ -34,9 +34,15 @@ class MetadataTree(Tree):
         into the tree.
         """
         images = data["images"] if "images" in data else []
+        color = data["color"] if "color" in data else ""
 
         # will raise duplicate node error
-        self.create_node(header, header, data=images, parent=parent)
+        self.create_node(
+            header,
+            header,
+            data={"images": images, "color": color},
+            parent=parent,
+        )
         for key in section_names(data):
             self.__build_tree(key, data[key], header)
 
@@ -48,7 +54,11 @@ class MetadataTree(Tree):
         :param header: The name of the keyword.
         """
         leaves = self.leaves(header)
-        return list(set(functools.reduce(lambda a, b: a + b.data, leaves, [])))
+        return list(
+            set(
+                functools.reduce(lambda a, b: a + b.data["images"], leaves, [])
+            )
+        )
 
     @typechecked
     def to_dict(self, nid=None) -> Dict[str, Any]:
@@ -61,7 +71,8 @@ class MetadataTree(Tree):
 
         nid = self.root if (nid is None) else nid
         ntag = self[nid].tag
-        tree_dict = {"name": ntag, "children": []}
+        color = self[nid].data["color"] if (self[nid].data) else ''
+        tree_dict = {"name": ntag, "color": color, "children": []}
 
         if self[nid].expanded:
             queue = self.children(nid)

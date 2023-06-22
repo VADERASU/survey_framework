@@ -8,7 +8,7 @@ from typeguard import typechecked
 
 
 def section_names(d):
-    return list(filter(lambda e: e != "images", d.keys()))
+    return list(filter(lambda k: isinstance(d[k], dict), d.keys()))
 
 
 def get_api_image_dir():
