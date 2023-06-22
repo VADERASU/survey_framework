@@ -7,5 +7,5 @@ images = ['A.2023.P1_2.png', 'B.2023.P2.jpg']
 [SectionA.SubSectionB.SubSubSectionB]
 images = ['C.2023.P3.jpg','D.2023.P4.png']
 
-[SectionB]
+[SectionB.SubSectionC]
 images = ['A.2023.P1_1.gif', 'A.2023.P1_2.png']

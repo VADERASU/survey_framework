@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import './App.css'
 
 import { API_URL } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
-
+import Filters from './components/Filters';
 function App() {
     const [images, setImages] = useState([]);
     const [papers, setPapers] = useState({});
-    const [metadata, setMetadata] = useState({});
+    const [metadata, setMetadata] = useState(null);
     const [selected, setSelected] = useState(null);
+    const [filter, setFilter] = useState(null);
 
     useEffect(() => {
         fetch(`${API_URL}/get_db/survey`, { method: "GET" })
@@ -24,17 +27,22 @@ function App() {
                 setImages(data.images);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
-                console.log(data.papers);
             }).catch((e) => {
                 alert(e);
             });
     }, []);
 
     return (
-        <div>
-            <h1>Survey</h1>
+        <Stack gap={2}>
+            <Typography variant="h1">Survey</Typography>
+            <Filters metadata={metadata} setFilter={setFilter} />
             <Grid container spacing={2}>
-                {images.map((i) =>
+                {images.filter((i) => {
+                    if (filter !== null) {
+                        return i.keywords.includes(filter);
+                    }
+                    return true;
+                }).map((i) =>
                     <Grid key={i._id} item xs={4}>
                         <ImageCard data={i.data} onClick={() =>
                             setSelected({
@@ -51,7 +59,7 @@ function App() {
                 handleClose={() => setSelected(null)}
                 selected={selected}
             />
-        </div>
+        </Stack>
     );
 }
 export default App;
