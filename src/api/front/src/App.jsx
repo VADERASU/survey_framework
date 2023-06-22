@@ -19,7 +19,8 @@ function App() {
     const [theme, setTheme] = useState(createTheme());
 
     const createThemeFromMetadata = (md, themeDict, parentColor) => {
-        themeDict[md.name] = { main: (md.color === "") ? parentColor : md.color };
+        const useColor = (md.color === "") ? parentColor : md.color;
+        themeDict[md.name] = { main: useColor };
         for (const child of md.children) {
             createThemeFromMetadata(child, themeDict, themeDict[md.name].main);
         }
@@ -67,12 +68,12 @@ function App() {
                         </Grid>
                     )}
                 </Grid>
-                <PaperModal
-                    open={selected !== null}
-                    handleClose={() => setSelected(null)}
-                    selected={selected}
-                />
             </Stack>
+            <PaperModal
+                open={selected !== null}
+                handleClose={() => setSelected(null)}
+                selected={selected}
+            />
         </ThemeProvider>
     );
 }

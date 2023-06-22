@@ -26,7 +26,10 @@ export default function Filters({ metadata, setFilter }) {
             (<Box key={section.name} sx={{ backgroundColor: section.color }}>
                 <Typography variant="h5">{section.name}</Typography>
                 <Box sx={{ display: 'flex' }}>
-                    <Button color={section.name} onClick={() => setFilter(section.name)} variant="contained">All</Button>
+                    <Button color={section.name}
+                        onClick={() => setFilter(section.name)}
+                        variant="contained">
+                        All</Button>
                     {buildChildren(section.children)}
                 </Box>
             </Box>)
