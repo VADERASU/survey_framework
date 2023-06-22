@@ -8,12 +8,23 @@ import { API_URL } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
 import Filters from './components/Filters';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
 function App() {
     const [images, setImages] = useState([]);
     const [papers, setPapers] = useState({});
     const [metadata, setMetadata] = useState(null);
     const [selected, setSelected] = useState(null);
     const [filter, setFilter] = useState(null);
+    const [theme, setTheme] = useState(createTheme());
+
+    const createThemeFromMetadata = (md, themeDict, parentColor) => {
+        themeDict[md.name] = { main: (md.color === "") ? parentColor : md.color };
+        for (const child of md.children) {
+            createThemeFromMetadata(child, themeDict, themeDict[md.name].main);
+        }
+        return themeDict;
+    };
 
     useEffect(() => {
         fetch(`${API_URL}/get_db/survey`, { method: "GET" })
@@ -27,39 +38,42 @@ function App() {
                 setImages(data.images);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
+                setTheme(createTheme({ palette: createThemeFromMetadata(data.metadata, {}, "") }));
             }).catch((e) => {
                 alert(e);
             });
     }, []);
 
     return (
-        <Stack gap={2}>
-            <Typography variant="h1">Survey</Typography>
-            <Filters metadata={metadata} setFilter={setFilter} />
-            <Grid container spacing={2}>
-                {images.filter((i) => {
-                    if (filter !== null) {
-                        return i.keywords.includes(filter);
-                    }
-                    return true;
-                }).map((i) =>
-                    <Grid key={i._id} item xs={4}>
-                        <ImageCard data={i.data} onClick={() =>
-                            setSelected({
-                                thumbnail: i.data,
-                                keywords: i.keywords,
-                                paper: papers[i.paper]
-                            })
-                        } />
-                    </Grid>
-                )}
-            </Grid>
-            <PaperModal
-                open={selected !== null}
-                handleClose={() => setSelected(null)}
-                selected={selected}
-            />
-        </Stack>
+        <ThemeProvider theme={theme}>
+            <Stack gap={2}>
+                <Typography variant="h1">Survey</Typography>
+                <Filters metadata={metadata} setFilter={setFilter} />
+                <Grid container spacing={2}>
+                    {images.filter((i) => {
+                        if (filter !== null) {
+                            return i.keywords.includes(filter);
+                        }
+                        return true;
+                    }).map((i) =>
+                        <Grid key={i._id} item xs={4}>
+                            <ImageCard data={i.data} onClick={() =>
+                                setSelected({
+                                    thumbnail: i.data,
+                                    keywords: i.keywords,
+                                    paper: papers[i.paper]
+                                })
+                            } />
+                        </Grid>
+                    )}
+                </Grid>
+                <PaperModal
+                    open={selected !== null}
+                    handleClose={() => setSelected(null)}
+                    selected={selected}
+                />
+            </Stack>
+        </ThemeProvider>
     );
 }
 export default App;

@@ -9,7 +9,7 @@ export default function Filters({ metadata, setFilter }) {
         return <>
             {children.map((child) =>
                 <Stack key={child.name}>
-                    <Button onClick={() => setFilter(child.name)} variant="contained" key={child.name}>{child.name}</Button>
+                    <Button color={child.name} onClick={() => setFilter(child.name)} variant="contained" key={child.name}>{child.name}</Button>
                     <Box sx={{ display: 'flex' }}>
                         {buildChildren(child.children)}
                     </Box>
@@ -23,10 +23,10 @@ export default function Filters({ metadata, setFilter }) {
         const sections = metadata.children;
         return (<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             {sections.map((section) =>
-            (<Box key={section.name}>
+            (<Box key={section.name} sx={{ backgroundColor: section.color }}>
                 <Typography variant="h5">{section.name}</Typography>
                 <Box sx={{ display: 'flex' }}>
-                    <Button onClick={() => setFilter(section.name)} variant="contained">All</Button>
+                    <Button color={section.name} onClick={() => setFilter(section.name)} variant="contained">All</Button>
                     {buildChildren(section.children)}
                 </Box>
             </Box>)
