@@ -1,14 +1,20 @@
+import React from 'react';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
+import PersonIcon from '@mui/icons-material/Person';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from './StyledIconButton';
 
 export default function Filters({ metadata, setFilter }) {
 
     const buildChildren = (children) => <>
         {children.map((child) =>
             <Stack key={child.name}>
-                <Button color={child.name} onClick={() => setFilter(child.name)} variant="contained" key={child.name}>{child.name}</Button>
+                <Tooltip title={child.name}>
+                    <IconButton color={child.name} onClick={() => setFilter(child.name)} variant="outlined" key={child.name}><PersonIcon /></IconButton>
+                </Tooltip>
                 <Box sx={{ display: 'flex', gap: '5px' }}>
                     {buildChildren(child.children)}
                 </Box>

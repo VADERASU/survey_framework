@@ -2,7 +2,6 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
 import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 

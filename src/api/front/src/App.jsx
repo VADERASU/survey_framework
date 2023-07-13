@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import './App.css'
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { API_URL } from './api/Constants';
+// edit SURVEY_NAME to correspond to your survey
+import { API_URL, SURVEY_NAME } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
 import Filters from './components/Filters';
@@ -28,7 +28,7 @@ function App() {
     };
 
     useEffect(() => {
-        fetch(`${API_URL}/get_db/survey`, { method: "GET" })
+        fetch(`${API_URL}/get_db/${SURVEY_NAME}`, { method: "GET" })
             .then((response) => {
                 if (response.ok) {
                     return response.json();
@@ -45,18 +45,13 @@ function App() {
             });
     }, []);
 
+    const filterFunc = (filter === null) ? () => true : (i) => i.keywords.includes(filter);
     return (
         <ThemeProvider theme={theme}>
             <Stack gap={1} >
-                <Typography variant="h1">Survey</Typography>
                 <Filters metadata={metadata} setFilter={setFilter} />
                 <Grid container gap={1}>
-                    {images.filter((i) => {
-                        if (filter !== null) {
-                            return i.keywords.includes(filter);
-                        }
-                        return true;
-                    }).map((i) =>
+                    {images.filter((i) => filterFunc(i)).map((i) =>
                         <Grid key={i._id} item>
                             <ImageCard data={i.data} onClick={() =>
                                 setSelected({
