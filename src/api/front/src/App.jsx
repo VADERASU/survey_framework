@@ -48,12 +48,12 @@ function App() {
     const filterFunc = (filter === null) ? () => true : (i) => i.keywords.includes(filter);
     return (
         <ThemeProvider theme={theme}>
-            <Stack gap={1} >
+            <Stack gap={2} >
                 <Filters metadata={metadata} setFilter={setFilter} />
-                <Grid container gap={1}>
+                <Grid container justifyContent="center">
                     {images.map((i) => {
                         const display = (filterFunc(i)) ? 'block' : 'none';
-                        return (<Grid sx={{ display }} key={i._id} item>
+                        return (<Grid sx={{ display, margin: '10px' }} key={i._id} item>
                             <ImageCard data={i.data} onClick={() =>
                                 setSelected({
                                     thumbnail: i.data,
