@@ -11,11 +11,11 @@ export default function Filters({ metadata, setFilter }) {
 
     const buildChildren = (children) => <>
         {children.map((child) =>
-            <Stack key={child.name}>
+            <Stack key={child.name} sx={{ flex: 1 }} gap={1}>
                 <Tooltip title={child.name}>
                     <IconButton color={child.name} onClick={() => setFilter(child.name)} variant="outlined" key={child.name}><PersonIcon /></IconButton>
                 </Tooltip>
-                <Box sx={{ display: 'flex', gap: '5px' }}>
+                <Box sx={{ display: 'flex', flex: 1, gap: '5px' }}>
                     {buildChildren(child.children)}
                 </Box>
             </Stack>
@@ -25,9 +25,9 @@ export default function Filters({ metadata, setFilter }) {
     if (metadata) {
         // ignore the root
         const sections = metadata.children;
-        return (<Box sx={{ display: 'flex', gap: '10px' }}>
+        return (<Box sx={{ display: 'flex', justifyContent: 'center', gap: '5px' }}>
             {sections.map((section) =>
-            (<Box key={section.name}>
+            (<Box sx={{ flex: 1, justifyContent: 'center' }} key={section.name}>
                 <Typography variant="h5">{section.name}</Typography>
                 <Box sx={{ display: 'flex', gap: '5px' }}>
                     <Button color={section.name}
