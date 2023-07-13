@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react';
+import { React, useEffect, useState, useTransition } from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import './App.css'
@@ -51,8 +51,9 @@ function App() {
             <Stack gap={1} >
                 <Filters metadata={metadata} setFilter={setFilter} />
                 <Grid container gap={1}>
-                    {images.filter((i) => filterFunc(i)).map((i) =>
-                        <Grid key={i._id} item>
+                    {images.map((i) => {
+                        const display = (filterFunc(i)) ? 'block' : 'none';
+                        return (<Grid sx={{ display }} key={i._id} item>
                             <ImageCard data={i.data} onClick={() =>
                                 setSelected({
                                     thumbnail: i.data,
@@ -60,7 +61,8 @@ function App() {
                                     paper: papers[i.paper]
                                 })
                             } />
-                        </Grid>
+                        </Grid>);
+                    }
                     )}
                 </Grid>
             </Stack>
