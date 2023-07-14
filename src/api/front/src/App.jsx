@@ -9,6 +9,7 @@ import { API_URL, SURVEY_NAME } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
 import Filters from './components/Filters';
+import getHeaders from './api/utils';
 
 function App() {
     const [images, setImages] = useState([]);
@@ -54,12 +55,14 @@ function App() {
                     {images.map((i) => {
                         const display = (filterFunc(i)) ? 'block' : 'none';
                         return (<Grid sx={{ display, margin: '10px' }} key={i._id} item>
-                            <ImageCard data={i.data} onClick={() =>
+                            <ImageCard data={i.data} onClick={() => {
+                                const headers = getHeaders(metadata);
                                 setSelected({
                                     thumbnail: i.data,
-                                    keywords: i.keywords,
+                                    keywords: i.keywords.filter((e) => !headers.includes(e)),
                                     paper: papers[i.paper]
                                 })
+                            }
                             } />
                         </Grid>);
                     }

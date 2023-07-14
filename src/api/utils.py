@@ -12,3 +12,12 @@ def get_image_data(filename: str):
     with open(fp, "rb") as f:
         b64 = base64.b64encode(f.read())
     return b64
+
+
+def drop_braces(s: str):
+    return s.replace("{", "").replace("}", "")
+
+
+def commands_to_utf8(s: str):
+    # for now, only have \textendash to convert
+    return s.replace("\\textendash", "-")

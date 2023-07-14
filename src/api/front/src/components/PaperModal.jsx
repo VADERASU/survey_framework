@@ -5,6 +5,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import Grid from '@mui/material/Grid';
 
 export default function PaperModal({
     open,
@@ -29,9 +30,9 @@ export default function PaperModal({
                             <Typography>{author}</Typography>
                         </Stack>
                     </Stack>
-                    <Stack direction="row" gap={1}>
-                        {keywords.map((k) => <Chip sx={{ backgroundColor: theme.palette[k].main }} key={k} variant="outlined" label={k} />)}
-                    </Stack>
+                    <Grid container spacing={1}>
+                        {keywords.map((k) => <Grid item> <Chip sx={{ backgroundColor: theme.palette[k].main }} key={k} variant="outlined" label={k} /></Grid>)}
+                    </Grid>
                 </Stack>
             </DialogContent>
         </Dialog >
