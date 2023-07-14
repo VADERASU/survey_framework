@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
+import "../App.css"
 
 export default function PaperModal({
     open,
@@ -24,7 +25,7 @@ export default function PaperModal({
             <DialogContent>
                 <Stack gap={1}>
                     <Stack direction="row" gap={1}>
-                        <img width={200} height={200} style={{ border: '1px solid' }} src={`data:image/png;base64,${thumbnail}`} />
+                        <img className="paperImage" height={200} width={200} style={{ border: '1px solid' }} src={`data:image/png;base64,${thumbnail}`} />
                         <Stack spacing={2}>
                             <Typography><b>{title}</b></Typography>
                             <Typography>{author}</Typography>
