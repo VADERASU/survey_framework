@@ -19,7 +19,8 @@ export default function PaperModal({
     const title = (selected) ? selected.paper.title : '';
     const author = (selected) ? selected.paper.author : '';
     const keywords = (selected) ? selected.keywords : [];
-
+    const doi = (selected) ? selected.paper.doi : '';
+    const link = `https://doi.org/${doi}`;
     const theme = useTheme();
 
     return (
@@ -27,7 +28,9 @@ export default function PaperModal({
             <DialogContent>
                 <Stack direction="row" gap={2}>
                     <Box sx={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', display: 'flex' }} >
-                        <img className="paperImage" height={200} width={200} src={`data:image/png;base64,${thumbnail}`} />
+                        <a style={{ color: 'black' }} href={link}>
+                            <img className="paperImage" height={200} width={200} src={`data:image/png;base64,${thumbnail}`} />
+                        </a>
                     </Box>
                     <Stack spacing={2}>
                         <Typography><b>{title}</b></Typography>
