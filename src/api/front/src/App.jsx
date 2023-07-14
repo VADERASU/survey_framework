@@ -30,7 +30,6 @@ function App() {
             createThemeFromMetadata(child, themeDict, themeDict[md.name].main);
         }
 
-        // add white
         themeDict.white = { main: "#FFFFFF" }
         return themeDict;
     };

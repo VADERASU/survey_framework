@@ -1,5 +1,9 @@
+from pathlib import Path
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pymongo import MongoClient, errors
 
 import api.utils
@@ -7,6 +11,9 @@ from database.mongo import MongoWrapper
 from database.utils import clean_mongo_result, list_to_dict
 
 from .LaTexAccents import AccentConverter
+
+f = Path(__file__)
+this_dir = f.parent
 
 app = FastAPI()
 
@@ -66,3 +73,11 @@ def get_db(survey: str):
         papers[paper] = data
 
     return {"papers": papers, "images": images, "metadata": md}
+
+
+@app.get("/")
+def frontend():
+    return RedirectResponse(url="/index.html", status_code=303)
+
+
+app.mount("/", StaticFiles(directory=f"{this_dir}/front/dist"), name="static")

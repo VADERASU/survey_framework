@@ -308,7 +308,6 @@ class AccentConverter:
                 x = s1.replace(
                     " ", ""
                 )  # remove the spaces to match the format of translation table
-                print(x)
                 if x in self.translation_rule.keys():
                     if utf8_or_ascii == 1:
                         s = s.replace(s1, self.translation_rule[x][0])

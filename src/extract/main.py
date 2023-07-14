@@ -18,6 +18,7 @@ def main():
     except errors.ServerSelectionTimeoutError as err:
         sys.exit(f"Error connecting to the database: {err}")
 
+    # TODO: need to make sure this is no longer hardcoded
     survey_name = "2d_3d_combo"
     db = MongoWrapper(client.surveys)
     print(f"Update statistics for {survey_name}:\n")
