@@ -1,12 +1,14 @@
 import React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import Chip from '@mui/material/Chip';
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import "../App.css"
+import PersonIcon from '@mui/icons-material/Person';
+import Tooltip from '@mui/material/Tooltip';
 
 export default function PaperModal({
     open,
@@ -23,17 +25,24 @@ export default function PaperModal({
     return (
         <Dialog fullWidth maxWidth='sm' open={open} onClose={handleClose} scroll="body">
             <DialogContent>
-                <Stack gap={1}>
-                    <Stack direction="row" gap={1}>
-                        <img className="paperImage" height={200} width={200} style={{ border: '1px solid' }} src={`data:image/png;base64,${thumbnail}`} />
-                        <Stack spacing={2}>
-                            <Typography><b>{title}</b></Typography>
-                            <Typography>{author}</Typography>
-                        </Stack>
+                <Stack direction="row" gap={2}>
+                    <Box sx={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', display: 'flex' }} >
+                        <img className="paperImage" height={200} width={200} src={`data:image/png;base64,${thumbnail}`} />
+                    </Box>
+                    <Stack spacing={2}>
+                        <Typography><b>{title}</b></Typography>
+                        <Typography>{author}</Typography>
+                        <Grid container>
+                            {keywords.map((k) => <Grid sx={{ marginRight: '5px', marginBottom: '5px' }} item key={k}>
+                                <Tooltip title={k}>
+                                    <Box className="borderOnHover" sx={{ backgroundColor: theme.palette[k].main }} >
+                                        <PersonIcon color="white" />
+                                    </Box>
+                                </Tooltip>
+                            </Grid>)}
+                        </Grid>
+
                     </Stack>
-                    <Grid container spacing={1}>
-                        {keywords.map((k) => <Grid item> <Chip sx={{ backgroundColor: theme.palette[k].main }} key={k} variant="outlined" label={k} /></Grid>)}
-                    </Grid>
                 </Stack>
             </DialogContent>
         </Dialog >

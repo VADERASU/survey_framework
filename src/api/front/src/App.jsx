@@ -29,6 +29,9 @@ function App() {
         for (const child of md.children) {
             createThemeFromMetadata(child, themeDict, themeDict[md.name].main);
         }
+
+        // add white
+        themeDict.white = { main: "#FFFFFF" }
         return themeDict;
     };
 

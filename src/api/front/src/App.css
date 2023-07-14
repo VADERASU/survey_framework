@@ -1,3 +1,9 @@
 .paperImage {
     object-fit: contain;
+    border: 1px solid;
+    alignContent: center;
+}
+
+.borderOnHover:hover {
+    border: 1px solid;
 }
