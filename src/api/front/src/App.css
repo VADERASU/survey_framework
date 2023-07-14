@@ -7,3 +7,7 @@
 .borderOnHover:hover {
     border: 1px solid;
 }
+
+.showClickOnHover:hover {
+    cursor: pointer;
+}
