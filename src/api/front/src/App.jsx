@@ -58,7 +58,7 @@ function App() {
         return (
             <ThemeProvider theme={theme}>
                 <Stack gap={2} sx={{ padding: '2rem' }} >
-                    <Filters metadata={metadata} setFilter={setFilter} />
+                    <Filters metadata={metadata} icons={icons} setFilter={setFilter} />
                     <Grid container justifyContent="center">
                         {images.map((i) => {
                             const display = (filterFunc(i)) ? 'block' : 'none';

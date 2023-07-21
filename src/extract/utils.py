@@ -25,10 +25,15 @@ def get_api_image_dir():
 def get_api_icon_dir():
     """
     Assumes that the icons directory for the back-end will be in
-    ../../api/icons
+    ../../api/front/src/icons
     """
     source = Path(__file__).resolve()
-    dir = source.parent.parent.joinpath("api").joinpath("icons")
+    dir = (
+        source.parent.parent.joinpath("api")
+        .joinpath("front")
+        .joinpath("src")
+        .joinpath("icons")
+    )
     mkdir(dir)
     return dir
 
