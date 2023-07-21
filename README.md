@@ -64,7 +64,8 @@ An optional `icons` directory can be provided.
 The extraction script will check for an `icon` property in the metadata.toml file
 and load the corresponding icon into the API's icon folder if found.
 
-Please note that icons *MUST* be SVG files.
+Please note that icons *MUST* be SVG files. 
+If using Adobe Illustrator, make sure to export icons with "Styling" set to "Presentation Attributes".
 
 ## Installation
 The easiest way to install this package is through [poetry](https://python-poetry.org/).
