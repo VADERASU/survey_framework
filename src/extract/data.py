@@ -118,16 +118,19 @@ def load_icons(directory, destination, md):
     :raises ValueError: [TODO:description]
     """
     p = utils.join_directory(directory, "icons")
-    # get the list of icons we need to load from the metadata file
-    requested = md.get_all_icons()
-    icons = list(p.glob("**/*.svg"))
-    icon_names = [os.path.basename(icon) for icon in icons]
+    if p.exists():
+        # get the list of icons we need to load from the metadata file
+        requested = md.get_all_icons()
+        icons = list(p.glob("**/*.svg"))
+        icon_names = [os.path.basename(icon) for icon in icons]
 
-    # if all requested icons exist in the directory
-    if all([r in icon_names for r in requested]):
-        for icon in icons:
-            if icon.is_file():
-                shutil.copy2(icon, destination)
+        # if all requested icons exist in the directory
+        if all([r in icon_names for r in requested]):
+            for icon in icons:
+                if icon.is_file():
+                    shutil.copy2(icon, destination)
+        else:
+            missing = [r for r in requested if r not in icon_names]
+            raise ValueError(f"Requested icons {missing} do not exist.")
     else:
-        missing = [r for r in requested if r not in icon_names]
-        raise ValueError(f"Requested icons {missing} do not exist.")
+        print(f"Icons directory not found at {p}. Not loading icons.")
