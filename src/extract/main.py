@@ -1,3 +1,4 @@
+import os
 import sys
 
 from pymongo import MongoClient, errors
@@ -10,7 +11,7 @@ from extract.tree import MetadataTree
 def main():
     parser = utils.build_parser()
     args = parser.parse_args()
-    dir, img_dir, icon_dir = utils.check_args(args)
+    dir, img_dir, icon_dir, name = utils.check_args(args)
 
     client = MongoClient(serverSelectionTimeoutMS=2000)
     try:
@@ -18,8 +19,11 @@ def main():
     except errors.ServerSelectionTimeoutError as err:
         sys.exit(f"Error connecting to the database: {err}")
 
-    # TODO: need to make sure this is no longer hardcoded
-    survey_name = "2d_3d_combo"
+    # survey defaults to the name of the directory
+    survey_name = os.path.basename(dir)
+    if name is not None:
+        survey_name = name
+
     db = MongoWrapper(client.surveys)
     print(f"Update statistics for {survey_name}:\n")
 

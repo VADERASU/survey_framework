@@ -62,6 +62,7 @@ def get_db(survey: str):
         # get keywords specific to this survey
         image["keywords"] = image["keywords"][survey]
 
+    # fixes latex symbols
     converter = AccentConverter()
     for paper, data in papers.items():
         # assume accents will be in authors field

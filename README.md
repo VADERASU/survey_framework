@@ -17,6 +17,8 @@ The extraction script, ran with `survey_extract`, reads a directory and extracts
 | flag  | description |
 | ----  | ----------- |
 | -i    | Directory to copy images to from the images/ subdirectory. If using the API, leave this blank. |
+| -c    | Directory to copy icons to from the icons/ subdirectory. If using the API, leave this blank. |
+| -n    | Name of the database to store the survey in. Defaults to the name of the subdirectory containing your data. This should be the value used in constants.js as {SURVEY_NAME}.
 | -h    | Prints help text. |
 
 The directory needs to be structured in a specific way for the script to work.

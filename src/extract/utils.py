@@ -43,7 +43,8 @@ def build_parser():
     parser = argparse.ArgumentParser(prog="SurveyPaperExtractor")
     parser.add_argument("directory")
     parser.add_argument("-i", "--image-directory", default=get_api_image_dir())
-    parser.add_argument("-n", "--icon-directory", default=get_api_icon_dir())
+    parser.add_argument("-c", "--icon-directory", default=get_api_icon_dir())
+    parser.add_argument("-n", "--name")
     return parser
 
 
@@ -123,7 +124,7 @@ def check_args(args):
     image_directory = build_directory(args.image_directory)
     icon_directory = build_directory(args.icon_directory)
 
-    return directory, image_directory, icon_directory
+    return directory, image_directory, icon_directory, args.name
 
 
 @typechecked
