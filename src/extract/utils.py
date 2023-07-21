@@ -17,7 +17,25 @@ def get_api_image_dir():
     ../../api/images
     """
     source = Path(__file__).resolve()
-    return source.parent.parent.joinpath("api").joinpath("images")
+    dir = source.parent.parent.joinpath("api").joinpath("images")
+    mkdir(dir)
+    return dir
+
+
+def get_api_icon_dir():
+    """
+    Assumes that the icons directory for the back-end will be in
+    ../../api/icons
+    """
+    source = Path(__file__).resolve()
+    dir = source.parent.parent.joinpath("api").joinpath("icons")
+    mkdir(dir)
+    return dir
+
+
+def mkdir(p: Path):
+    if not os.path.exists(p):
+        os.makedirs(p)
 
 
 # TODO: add database name argument
@@ -25,6 +43,7 @@ def build_parser():
     parser = argparse.ArgumentParser(prog="SurveyPaperExtractor")
     parser.add_argument("directory")
     parser.add_argument("-i", "--image-directory", default=get_api_image_dir())
+    parser.add_argument("-n", "--icon-directory", default=get_api_icon_dir())
     return parser
 
 
@@ -102,7 +121,9 @@ def check_args(args):
     """
     directory = build_directory(args.directory)
     image_directory = build_directory(args.image_directory)
-    return directory, image_directory
+    icon_directory = build_directory(args.icon_directory)
+
+    return directory, image_directory, icon_directory
 
 
 @typechecked

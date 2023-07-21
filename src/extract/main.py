@@ -10,7 +10,7 @@ from extract.tree import MetadataTree
 def main():
     parser = utils.build_parser()
     args = parser.parse_args()
-    dir, img_dir = utils.check_args(args)
+    dir, img_dir, icon_dir = utils.check_args(args)
 
     client = MongoClient(serverSelectionTimeoutMS=2000)
     try:
@@ -39,6 +39,7 @@ def main():
     # build a tree for the metadata hierarchy
     md = MetadataTree(raw_md)
     data.map_image_keywords(images, md)
+    data.load_icons(dir, icon_dir, md)
 
     m_up, m_in = db.add_metadata(md, survey_name)
     if m_up:

@@ -34,17 +34,29 @@ class MetadataTree(Tree):
         into the tree.
         """
         images = data["images"] if "images" in data else []
+        # TODO: maybe use reflection?
+        # can use the MetadataDict type to get proper defaults
         color = data["color"] if "color" in data else ""
+        icon = data["icon"] if "icon" in data else ""
 
         # will raise duplicate node error
         self.create_node(
             header,
             header,
-            data={"images": images, "color": color},
+            data={"images": images, "color": color, "icon": icon},
             parent=parent,
         )
         for key in section_names(data):
             self.__build_tree(key, data[key], header)
+
+    def get_all_icons(self):
+        icons = []
+        for node in self.tree.all_nodes():
+            data = node.data
+            if data is not None and "icon" in data:
+                if data["icon"] != "":
+                    icons.append(data["icon"])
+        return icons
 
     @typechecked
     def get_keyword_images(self, header: str):
@@ -71,8 +83,14 @@ class MetadataTree(Tree):
 
         nid = self.root if (nid is None) else nid
         ntag = self[nid].tag
-        color = self[nid].data["color"] if (self[nid].data) else ''
-        tree_dict = {"name": ntag, "color": color, "children": []}
+        color = self[nid].data["color"] if (self[nid].data) else ""
+        icon = self[nid].data["icon"] if (self[nid].data) else ""
+        tree_dict = {
+            "name": ntag,
+            "color": color,
+            "icon": icon,
+            "children": [],
+        }
 
         if self[nid].expanded:
             queue = self.children(nid)

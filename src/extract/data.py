@@ -1,7 +1,7 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, TypedDict
+from typing import Dict, List, TypedDict
 
 import bibtexparser
 import toml
@@ -10,13 +10,6 @@ from typeguard import typechecked
 
 from extract import utils
 from extract.tree import MetadataTree
-
-
-class Metadata(TypedDict):
-    images: List[str]
-
-
-MetadataDict = Dict[str, Metadata]
 
 
 # TODO: validate metadata here? or let tree do it?
@@ -80,7 +73,7 @@ def load_images(
                     "paper": valid_papers[paper],
                 }
 
-    if len(extracted) == 0:
+    if len(extracted.values()) == 0:
         raise ValueError(
             f"{p} does not contain any of the supported\
             image types {img_types}."
@@ -112,3 +105,29 @@ def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
 
     if len(missing) > 0:
         raise ValueError(f"Images missing keywords: {missing}.")
+
+
+# TODO: typecheck
+def load_icons(directory, destination, md):
+    """
+    [TODO:description]
+
+    :param directory [TODO:type]: [TODO:description]
+    :param destination [TODO:type]: [TODO:description]
+    :param md [TODO:type]: [TODO:description]
+    :raises ValueError: [TODO:description]
+    """
+    p = utils.join_directory(directory, "icons")
+    # get the list of icons we need to load from the metadata file
+    requested = md.get_all_icons()
+    icons = list(p.glob("**/*.svg"))
+    icon_names = [os.path.basename(icon) for icon in icons]
+
+    # if all requested icons exist in the directory
+    if all([r in icon_names for r in requested]):
+        for icon in icons:
+            if icon.is_file():
+                shutil.copy2(icon, destination)
+    else:
+        missing = [r for r in requested if r not in icon_names]
+        raise ValueError(f"Requested icons {missing} do not exist.")
