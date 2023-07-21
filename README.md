@@ -37,6 +37,8 @@ A sample section could look like this:
 ```
 [SectionA.SubSectionA]
 images=['image1.png','image2.png']
+icon="sectionA_icon.svg"
+color="#ABCDEF"
 
 [SectionA.SubSectionB.SubSubSectionA]
 ...
@@ -44,10 +46,25 @@ images=['image1.png','image2.png']
 Note that the header section MUST be designated with a `.`, this is also true for sections nested even further in the taxonomy. 
 Otherwise, your subsections will be treated as main sections.
 
+You can additionally specify a color for each section / subsection, with parent sections
+passing their colors down to their children unless overwritten.
+This lets you specify an overall color scheme for a section, with children being able
+to use their own colors.
+
+You can also specify an icon (SVG format only) that will be displayed throughout the UI. 
+Please see the `icons` section below for more details.
+
 ### papers.bib 
 Next to the `metadata.toml` file should be a `papers.bib` file. 
 This should be a bibtex file containing all of the papers you plan to reference.
 This file is optional if you are not adding any new papers to an existing database.
+
+### icons/
+An optional `icons` directory can be provided. 
+The extraction script will check for an `icon` property in the metadata.toml file
+and load the corresponding icon into the API's icon folder if found.
+
+Please note that icons *MUST* be SVG files.
 
 ## Installation
 The easiest way to install this package is through [poetry](https://python-poetry.org/).
