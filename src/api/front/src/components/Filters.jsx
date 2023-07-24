@@ -26,7 +26,7 @@ export default function Filters({ metadata, setFilter }) {
         {children.map((child) =>
             <Stack key={child.name} sx={{ flex: 1 }}>
                 <Tooltip title={child.name}>
-                    <IconButton color={child.name} sx={{ margin: '5px' }} onClick={() => setFilter(child.name)} variant="outlined" key={child.name}>{buildIcon(child)}</IconButton>
+                    <IconButton size="small" color={child.name} sx={{ margin: '5px' }} onClick={() => setFilter(child.name)} variant="outlined" key={child.name}>{buildIcon(child)}</IconButton>
                 </Tooltip>
                 <Box sx={{ display: 'flex', flex: 1, gap: '5px' }}>
                     {buildChildren(child.children)}
@@ -38,17 +38,18 @@ export default function Filters({ metadata, setFilter }) {
     if (metadata) {
         // ignore the root
         const sections = metadata.children;
-        return (<Container maxWidth={false} sx={{ display: { "lg": 'flex' }, justifyContent: { "lg": "center" }, gap: {"lg": '5px'} }}>
-        
+        return (<Container maxWidth={false} sx={{ display: { "lg": 'flex' }, justifyContent: { "lg": "center" }, gap: { "lg": '5px' } }}>
+
             {sections.map((section) =>
             (<>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Button color={section.name}
+                        size="small"
                         onClick={() => setFilter(section.name)}
                         variant="contained">
                         {section.name}</Button>
                 </Box>
-                <Box sx={{ display: 'flex', flexWrap: { "xs": 'wrap', "sm": 'none' }, justifyContent: 'center' }}>
+                <Box sx={{ display: 'flex', flexWrap: { "md": 'wrap', "lg": 'none' }, justifyContent: 'center' }}>
                     {buildChildren(section.children)}
                 </Box>
             </>
