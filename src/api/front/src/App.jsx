@@ -15,6 +15,7 @@ import Filters from './components/Filters';
 import getHeaders from './api/utils';
 
 function App() {
+    // TODO: images can be served statically
     const [images, setImages] = useState([]);
     const [papers, setPapers] = useState({});
     const [metadata, setMetadata] = useState(null);
@@ -57,7 +58,7 @@ function App() {
     if (isPageLoaded) {
         return (
             <ThemeProvider theme={theme}>
-                <Stack gap={2} sx={{ padding: '2rem' }} >
+                <Stack gap={2} sx={{ padding: '1rem' }} >
                     <Filters metadata={metadata} setFilter={setFilter} />
                     <Grid container justifyContent="center">
                         {images.map((i) => {

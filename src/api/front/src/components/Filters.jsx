@@ -8,10 +8,10 @@ import Tooltip from '@mui/material/Tooltip';
 import SvgIcon from '@mui/material/SvgIcon';
 import SVG from 'react-inlinesvg';
 import CircularProgress from '@mui/material/CircularProgress';
+import Container from '@mui/material/Container';
 import IconButton from './StyledIconButton';
 
 export default function Filters({ metadata, setFilter }) {
-
     const buildIcon = (section) => {
         if (section.icon !== '') {
             const imgUrl = new URL(`../icons/${section.icon}`, import.meta.url).href;
@@ -21,6 +21,7 @@ export default function Filters({ metadata, setFilter }) {
         }
         return <PersonIcon />
     };
+
     const buildChildren = (children) => <>
         {children.map((child) =>
             <Stack key={child.name} sx={{ flex: 1 }}>
@@ -37,20 +38,23 @@ export default function Filters({ metadata, setFilter }) {
     if (metadata) {
         // ignore the root
         const sections = metadata.children;
-        return (<Box sx={{ display: 'flex', justifyContent: 'center', gap: '5px' }}>
+        return (<Container maxWidth={false} sx={{ display: { "lg": 'flex' }, justifyContent: { "lg": "center" }, gap: {"lg": '5px'} }}>
+        
             {sections.map((section) =>
-            (<Box sx={{ flex: 1, justifyContent: 'center' }} key={section.name}>
-                <Typography variant="h5">{section.name}</Typography>
-                <Box sx={{ display: 'flex' }}>
+            (<>
+                <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                     <Button color={section.name}
                         onClick={() => setFilter(section.name)}
                         variant="contained">
-                        All</Button>
+                        {section.name}</Button>
+                </Box>
+                <Box sx={{ display: 'flex', flexWrap: { "xs": 'wrap', "sm": 'none' }, justifyContent: 'center' }}>
                     {buildChildren(section.children)}
                 </Box>
-            </Box>)
+            </>
+            )
             )}
-        </Box>);
+        </Container>);
     }
     return <Box sx={{ display: 'flex' }} />;
 }
