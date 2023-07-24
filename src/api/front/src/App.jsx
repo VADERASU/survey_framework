@@ -1,4 +1,4 @@
-import { React, useEffect, useState, useTransition } from 'react';
+import { React, useEffect, useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import './App.css'
@@ -12,7 +12,7 @@ import { API_URL, SURVEY_NAME } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
 import Filters from './components/Filters';
-import getHeaders from './api/utils';
+import { getHeaders } from './api/utils';
 
 function App() {
     // TODO: images can be served statically
@@ -27,11 +27,14 @@ function App() {
     const createThemeFromMetadata = (md, themeDict, parentColor) => {
         const useColor = (md.color === "") ? parentColor : md.color;
         themeDict[md.name] = { main: useColor };
+        // TODO: proper inversion function
+        themeDict[`inverted_${md.name}`] = { main: "#d6d6d6" };
         for (const child of md.children) {
             createThemeFromMetadata(child, themeDict, themeDict[md.name].main);
         }
 
-        themeDict.white = { main: "#FFFFFF" }
+        themeDict.white = { main: "#FFFFFF" };
+        themeDict.black = { main: "#000000" };
         return themeDict;
     };
 
@@ -54,12 +57,20 @@ function App() {
             });
     }, []);
 
+    const toggleFilter = (filterName) => {
+        if (filterName !== filter) {
+            setFilter(filterName);
+        } else {
+            setFilter(null);
+        }
+    }
+
     const filterFunc = (filter === null) ? () => true : (i) => i.keywords.includes(filter);
     if (isPageLoaded) {
         return (
             <ThemeProvider theme={theme}>
                 <Stack gap={2} sx={{ padding: '1rem' }} >
-                    <Filters metadata={metadata} setFilter={setFilter} />
+                    <Filters metadata={metadata} setFilter={toggleFilter} filter={filter} />
                     <Grid container justifyContent="center">
                         {images.map((i) => {
                             const display = (filterFunc(i)) ? 'block' : 'none';
