@@ -20,7 +20,7 @@ function App() {
     const [papers, setPapers] = useState({});
     const [metadata, setMetadata] = useState(null);
     const [selected, setSelected] = useState(null);
-    const [filter, setFilter] = useState(null);
+    const [filter, setFilter] = useState({});
     const [theme, setTheme] = useState(createTheme());
     const [isPageLoaded, setIsPageLoaded] = useState(false);
 
@@ -50,6 +50,11 @@ function App() {
                 setImages(data.images);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
+
+                const filters = {};
+                getHeaders(data.metadata).forEach((section) => { filters[section] = [] });
+                setFilter(filters);
+
                 setTheme(createTheme({ palette: createThemeFromMetadata(data.metadata, {}, "") }));
                 setIsPageLoaded(true);
             }).catch((e) => {
@@ -57,15 +62,34 @@ function App() {
             });
     }, []);
 
-    const toggleFilter = (filterName) => {
-        if (filterName !== filter) {
-            setFilter(filterName);
+    const toggleFilter = (filterName, sectionName) => {
+        const filterArray = filter[sectionName];
+
+        if (!filterArray.includes(filterName)) {
+            // if its a section header, set the entire section to ALL
+            if (filterName === sectionName) {
+                setFilter({ ...filter, [sectionName]: [filterName] });
+            } else if (filterArray.includes(sectionName)) {
+                const idx = filterArray.indexOf(sectionName);
+                setFilter({ ...filter, [sectionName]: [...filterArray.slice(0, idx), ...filterArray.slice(idx + 1), filterName] });
+            } else {
+                setFilter({ ...filter, [sectionName]: [...filterArray, filterName] });
+            }
         } else {
-            setFilter(null);
+            const idx = filterArray.indexOf(filterName);
+            setFilter({ ...filter, [sectionName]: [...filterArray.slice(0, idx), ...filterArray.slice(idx + 1)] });
         }
     }
 
-    const filterFunc = (filter === null) ? () => true : (i) => i.keywords.includes(filter);
+    const filterFunc = (Object.values(filter).every((d) => d.length === 0)) ? () => true : (i) =>
+        Object.keys(filter).filter((section) => {
+            const filters = filter[section];
+            return filters.length > 0;
+        }).map((section) => {
+            const filters = filter[section];
+            return filters.map((d) => i.keywords.includes(d)).some((d) => d);
+        }).every((d) => d);
+
     if (isPageLoaded) {
         return (
             <ThemeProvider theme={theme}>
