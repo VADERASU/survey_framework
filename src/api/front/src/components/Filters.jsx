@@ -24,11 +24,12 @@ export default function Filters({ metadata, setFilter, filter }) {
 
     const buildChildren = (children) => <>
         {children.map((child) => {
-            const color = (child.name === filter) ? `inverted_${child.name}` : child.name;
+            const color = (child.name === filter) ? child.name : `inverted_${child.name}`;
 
             return (<Stack key={child.name} sx={{ flex: 1 }}>
                 <Tooltip title={child.name}>
                     <IconButton size="small"
+                        disableRipple
                         color={color} sx={{ margin: '5px' }} onClick={() => setFilter(child.name)} variant="outlined" key={child.name}>{buildIcon(child)}</IconButton>
                 </Tooltip>
                 <Box sx={{ display: 'flex', flex: 1, gap: '5px' }}>
@@ -45,11 +46,12 @@ export default function Filters({ metadata, setFilter, filter }) {
         return (<Container maxWidth={false} sx={{ display: { "lg": 'flex' }, justifyContent: { "lg": "center" }, gap: { "lg": '5px' } }}>
 
             {sections.map((section) => {
-                const color = (section.name === filter) ? `inverted_${section.name}` : section.name;
+                const color = (section.name === filter) ? section.name : `inverted_${section.name}`;
                 return (<>
                     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
                         <Button color={color}
                             size="small"
+                            disableRipple
                             onClick={() => setFilter(section.name)}
                             variant="contained">
                             {section.name}</Button>
