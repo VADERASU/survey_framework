@@ -9,6 +9,9 @@ import Grid from '@mui/material/Grid';
 import "../App.css"
 import PersonIcon from '@mui/icons-material/Person';
 import Tooltip from '@mui/material/Tooltip';
+import SvgIcon from '@mui/material/SvgIcon';
+import SVG from 'react-inlinesvg';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function PaperModal({
     open,
@@ -20,8 +23,25 @@ export default function PaperModal({
     const author = (selected) ? selected.paper.author : '';
     const keywords = (selected) ? selected.keywords : [];
     const doi = (selected) ? selected.paper.doi : '';
+    const icons = (selected) ? selected.icons : {};
     const link = `https://doi.org/${doi}`;
     const theme = useTheme();
+
+    // TODO: move to utils, need to have the entirety of the project rely on the icons dict
+    // even better would be to have the tree structure only contain ids and have another dict to access
+    // metadata info directly
+    const buildIcon = (section) => {
+        const icon = icons[section];
+        console.log(section, icon);
+        if (icon !== undefined && icon !== '') {
+            const imgUrl = new URL(`../icons/${icon}`, import.meta.url).href;
+            return <SvgIcon>
+                <SVG src={imgUrl} loader={<CircularProgress />} />
+            </SvgIcon>
+        }
+        return <PersonIcon />
+    };
+
 
     return (
         <Dialog fullWidth maxWidth='sm' open={open} onClose={handleClose} scroll="body">
@@ -38,8 +58,8 @@ export default function PaperModal({
                         <Grid container>
                             {keywords.map((k) => <Grid sx={{ marginRight: '5px', marginBottom: '5px' }} item key={k}>
                                 <Tooltip title={k}>
-                                    <Box className="borderOnHover" sx={{ backgroundColor: theme.palette[k].main }} >
-                                        <PersonIcon color="white" />
+                                    <Box className="borderOnHover">
+                                        {buildIcon(k)}
                                     </Box>
                                 </Tooltip>
                             </Grid>)}

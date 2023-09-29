@@ -13,7 +13,6 @@ import IconButton from './StyledIconButton';
 export default function Filters({ metadata, setFilter, filter }) {
 
     const filterList = Object.values(filter).reduce((a, b) => a.concat(b));
-    console.log(filterList);
     
     const buildIcon = (section) => {
         if (section.icon !== '') {
@@ -43,8 +42,6 @@ export default function Filters({ metadata, setFilter, filter }) {
         })}
     </>
 
-    // filters should be OR within a cat
-    // AND between cats
     if (metadata) {
         // ignore the root
         const sections = metadata.children;

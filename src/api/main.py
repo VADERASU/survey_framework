@@ -56,6 +56,16 @@ def get_db(survey: str):
     images = list(map(lambda e: clean_mongo_result(e), db.get_images(survey)))
     md = clean_mongo_result(db.get_metadata(survey))
 
+
+    # TODO: put in utils
+    icons = {}
+    def get_icon(children):
+        for child in children:
+            icons[child['name']] = child['icon']
+            get_icon(child['children'])
+    get_icon(md['children'])
+    
+
     for image in images:
         # get image data as b64 strings
         data = api.utils.get_image_data(image["filename"])
@@ -74,7 +84,7 @@ def get_db(survey: str):
         )
         papers[paper] = data
 
-    return {"papers": papers, "images": images, "metadata": md}
+    return {"papers": papers, "images": images, "metadata": md, "icons": icons}
 
 
 @app.get("/")

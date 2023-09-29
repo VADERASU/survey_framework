@@ -3,7 +3,6 @@ export function getHeaders(metadata) {
 }
 
 export function invertHex(hex) {
-    console.log(hex);
     if (hex.indexOf('#') === 0) {
         hex = hex.slice(1);
     }

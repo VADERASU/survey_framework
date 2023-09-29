@@ -23,6 +23,7 @@ function App() {
     const [filter, setFilter] = useState({});
     const [theme, setTheme] = useState(createTheme());
     const [isPageLoaded, setIsPageLoaded] = useState(false);
+    const [icons, setIcons] = useState({});
 
     const createThemeFromMetadata = (md, themeDict, parentColor) => {
         const useColor = (md.color === "") ? parentColor : md.color;
@@ -50,7 +51,8 @@ function App() {
                 setImages(data.images);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
-
+                setIcons(data.icons);
+                
                 const filters = {};
                 getHeaders(data.metadata).forEach((section) => { filters[section] = [] });
                 setFilter(filters);
@@ -81,8 +83,13 @@ function App() {
         }
     }
 
+    /* this function allows you to dynamically build a bool statement
+     based on the filters that are selected
+     filters within a section are treated as ORs
+     between sections are ANDS */
     const filterFunc = (Object.values(filter).every((d) => d.length === 0)) ? () => true : (i) =>
         Object.keys(filter).filter((section) => {
+            // filter out the sections without filters selected
             const filters = filter[section];
             return filters.length > 0;
         }).map((section) => {
@@ -102,6 +109,7 @@ function App() {
                                 <ImageCard data={i.data} onClick={() => {
                                     const headers = getHeaders(metadata);
                                     setSelected({
+                                        icons,
                                         thumbnail: i.data,
                                         keywords: i.keywords.filter((e) => !headers.includes(e)),
                                         paper: papers[i.paper]
