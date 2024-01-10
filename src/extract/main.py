@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 
 from extract import data, utils
 from extract.tree import MetadataTree
@@ -31,8 +30,6 @@ def main():
 
     images = data.load_images(dir, img_dir, set(papers.keys()))
 
-    print(img_dir)
-    print(icon_dir)
     # only need images if any one image array changes - hard to test for though
     # if images are updated, only need to check that all keywords are valid
     raw_md = data.load_toml(dir)
