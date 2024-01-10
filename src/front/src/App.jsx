@@ -8,7 +8,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import { API_URL, SURVEY_NAME } from './api/Constants';
+import { SURVEY_NAME } from './api/Constants';
 import ImageCard from './components/ImageCard';
 import PaperModal from './components/PaperModal';
 import Filters from './components/Filters';
@@ -42,7 +42,6 @@ function App() {
     useEffect(() => {
         const jsonURL = new URL(`./data/${SURVEY_NAME}.json`, import.meta.url).href;
 
-        console.log(jsonURL);
         fetch(jsonURL, { method: "GET" })
             .then((response) => {
                 if (response.ok) {
@@ -51,8 +50,8 @@ function App() {
                 throw new Error("Something went wrong.");
             })
             .then((data) => {
-                console.log(data);
-                setImages(Object.values(data.images));
+                const igs = data.images.map((i) => ({ ...i, url: new URL(`./images/${i.fname}`, import.meta.url).href }));
+                setImages(igs);
                 setPapers(data.papers);
                 setMetadata(data.metadata);
                 setIcons(data.icons);
@@ -110,11 +109,11 @@ function App() {
                         {images.map((i) => {
                             const display = (filterFunc(i)) ? 'block' : 'none';
                             return (<Grid sx={{ display, margin: '10px' }} key={i._id} item>
-                                <ImageCard fileName={i.fname} onClick={() => {
+                                <ImageCard fileSrc={i.url} onClick={() => {
                                     const headers = getHeaders(metadata);
                                     setSelected({
                                         icons,
-                                        fileName: i.fname,
+                                        fileSrc: i.url,
                                         keywords: i.keywords.filter((e) => !headers.includes(e)),
                                         paper: papers[i.paper]
                                     })

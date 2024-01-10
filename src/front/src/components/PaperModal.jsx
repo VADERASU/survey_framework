@@ -18,7 +18,7 @@ export default function PaperModal({
     handleClose = () => { },
     selected = null,
 }) {
-    const fileName = (selected) ? selected.fileName : '';
+    const fileSrc = (selected) ? selected.fileSrc : '';
     const title = (selected) ? selected.paper.title : '';
     const author = (selected) ? selected.paper.author : '';
     const keywords = (selected) ? selected.keywords : [];
@@ -42,15 +42,13 @@ export default function PaperModal({
         return <PersonIcon />
     };
 
-    const imageURL = new URL(`../images/${fileName}`, import.meta.url).href;
-
     return (
         <Dialog fullWidth maxWidth='sm' open={open} onClose={handleClose} scroll="body">
             <DialogContent>
                 <Stack direction="row" gap={2}>
                     <Box sx={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', display: 'flex' }} >
                         <a style={{ color: 'black' }} href={link}>
-                            <img className="paperImage" height={200} width={200} src={imageURL} />
+                            <img className="paperImage" height={200} width={200} src={fileSrc} />
                         </a>
                     </Box>
                     <Stack spacing={2}>
