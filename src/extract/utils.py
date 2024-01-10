@@ -11,32 +11,15 @@ def section_names(d):
     return list(filter(lambda k: isinstance(d[k], dict), d.keys()))
 
 
-def get_api_image_dir():
-    """
-    Assumes that the image directory for the back-end will be in
-    ../../api/images
-    """
+def get_frontend_source_dir():
     source = Path(__file__).resolve()
-    dir = source.parent.parent.joinpath("api").joinpath("images")
-    mkdir(dir)
+    dir = source.parent.parent.joinpath("api").joinpath("front").joinpath("src")
     return dir
 
-
-def get_api_icon_dir():
-    """
-    Assumes that the icons directory for the back-end will be in
-    ../../api/front/src/icons
-    """
-    source = Path(__file__).resolve()
-    dir = (
-        source.parent.parent.joinpath("api")
-        .joinpath("front")
-        .joinpath("src")
-        .joinpath("icons")
-    )
+def get_default_dir(dir_name:str):
+    dir = get_frontend_source_dir().joinpath(dir_name)
     mkdir(dir)
     return dir
-
 
 def mkdir(p: Path):
     if not os.path.exists(p):
@@ -47,8 +30,9 @@ def mkdir(p: Path):
 def build_parser():
     parser = argparse.ArgumentParser(prog="SurveyPaperExtractor")
     parser.add_argument("directory")
-    parser.add_argument("-i", "--image-directory", default=get_api_image_dir())
-    parser.add_argument("-c", "--icon-directory", default=get_api_icon_dir())
+    parser.add_argument("-i", "--image-directory", default=get_default_dir("images"))
+    parser.add_argument("-c", "--icon-directory", default=get_default_dir("icons"))
+    parser.add_argument("-d", "--data-directory", default=get_default_dir("data"))
     parser.add_argument("-n", "--name")
     return parser
 
@@ -128,8 +112,9 @@ def check_args(args):
     directory = build_directory(args.directory)
     image_directory = build_directory(args.image_directory)
     icon_directory = build_directory(args.icon_directory)
+    data_directory = build_directory(args.data_directory)
 
-    return directory, image_directory, icon_directory, args.name
+    return directory, image_directory, icon_directory, data_directory, args.name
 
 
 @typechecked
@@ -145,3 +130,11 @@ def extract_paper_from_image(f_name: Union[Path, str]) -> str:
 
     name, _ = os.path.splitext(f_name)
     return re.sub("_([^_]*)$", "", name)
+
+def drop_braces(s: str):
+    return s.replace("{", "").replace("}", "")
+
+
+def commands_to_utf8(s: str):
+    # for now, only have \textendash to convert
+    return s.replace("\\textendash", "-")

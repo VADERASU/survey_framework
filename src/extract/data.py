@@ -1,7 +1,7 @@
 import os
 import shutil
 from pathlib import Path
-from typing import Dict, List, TypedDict
+from typing import Dict, List, Set, TypedDict
 
 import bibtexparser
 import toml
@@ -35,14 +35,16 @@ def load_bibtex(directory: Path):
 
 class Image(TypedDict):
     keywords: List[str]
-    paper: ObjectId
+    paper: str
+    fname: str
 
+import base64
 
 # TODO: test image-paper validation
 @typechecked
 def load_images(
-    directory: Path, destination: Path, valid_papers: Dict[str, ObjectId]
-) -> Dict[str, Image]:
+    directory: Path, destination: Path, valid_papers: Set[str]
+) -> List[Image]:
     """
     Loads images from {directory} and copies them to {destination}.
 
@@ -54,7 +56,7 @@ def load_images(
     """
     p = utils.join_directory(directory, "images")
     img_types = ("jpg", "jpeg", "png", "gif")
-    extracted = {}
+    extracted = []
     for img_type in img_types:
         images = list(p.glob(f"**/*.{img_type}"))
         for image in images:
@@ -63,17 +65,15 @@ def load_images(
                 shutil.copy2(image, destination)
                 f_name = os.path.basename(image)
                 paper = utils.extract_paper_from_image(f_name)
-                if paper not in valid_papers.keys():
+
+                if paper not in valid_papers:
                     raise ValueError(
                         f"Paper {paper} does not exist in database."
                     )
 
-                extracted[f_name] = {
-                    "keywords": [],
-                    "paper": valid_papers[paper],
-                }
+                extracted.append({"keywords": [],"paper": paper, "fname": f_name})
 
-    if len(extracted.values()) == 0:
+    if len(extracted) == 0:
         raise ValueError(
             f"{p} does not contain any of the supported\
             image types {img_types}."
@@ -83,7 +83,7 @@ def load_images(
 
 
 # TODO: make method of MetadataTree, test
-def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
+def map_image_keywords(images: List[Image], md: MetadataTree):
     """
     Maps images to their keywords using a Metadata tree.
 
@@ -92,19 +92,14 @@ def map_image_keywords(images: Dict[str, Image], md: MetadataTree):
     """
     # remove root
     nodes = list(filter(lambda n: n.tag != "root", md.all_nodes()))
-    for image, image_md in images.items():
+    for image in images:
         for keyword in nodes:
             kw_images = md.get_keyword_images(keyword.tag)
-            if image in kw_images:
-                image_md["keywords"].append(keyword.tag)
-
-    # find any images that are missing keywords
-    missing = list(
-        filter(lambda k: len(images[k]["keywords"]) == 0, images.keys())
-    )
-
-    if len(missing) > 0:
-        raise ValueError(f"Images missing keywords: {missing}.")
+            if image["fname"] in kw_images:
+                image["keywords"].append(keyword.tag)
+        
+        if len(image["keywords"]) == 0:
+            raise ValueError(f"Image {image['fname']} missing keywords.")
 
 
 # TODO: typecheck

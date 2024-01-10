@@ -40,7 +40,10 @@ function App() {
     };
 
     useEffect(() => {
-        fetch(`${API_URL}/get_db/${SURVEY_NAME}`, { method: "GET" })
+        const jsonURL = new URL(`./data/${SURVEY_NAME}.json`, import.meta.url).href;
+
+        console.log(jsonURL);
+        fetch(jsonURL, { method: "GET" })
             .then((response) => {
                 if (response.ok) {
                     return response.json();
@@ -48,11 +51,12 @@ function App() {
                 throw new Error("Something went wrong.");
             })
             .then((data) => {
-                setImages(data.images);
+                console.log(data);
+                setImages(Object.values(data.images));
                 setPapers(data.papers);
                 setMetadata(data.metadata);
                 setIcons(data.icons);
-                
+
                 const filters = {};
                 getHeaders(data.metadata).forEach((section) => { filters[section] = [] });
                 setFilter(filters);
@@ -106,11 +110,11 @@ function App() {
                         {images.map((i) => {
                             const display = (filterFunc(i)) ? 'block' : 'none';
                             return (<Grid sx={{ display, margin: '10px' }} key={i._id} item>
-                                <ImageCard data={i.data} onClick={() => {
+                                <ImageCard fileName={i.fname} onClick={() => {
                                     const headers = getHeaders(metadata);
                                     setSelected({
                                         icons,
-                                        thumbnail: i.data,
+                                        fileName: i.fname,
                                         keywords: i.keywords.filter((e) => !headers.includes(e)),
                                         paper: papers[i.paper]
                                     })

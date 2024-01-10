@@ -3,7 +3,9 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import Paper from '@mui/material/Paper';
 
-export default function ImageCard({ data = "", onClick = () => { } }) {
+export default function ImageCard({ fileName = "", onClick = () => { } }) {
+    const imageURL = new URL(`../images/${fileName}`, import.meta.url).href;
+ 
     return (
         <Card className="borderOnHover showClickOnHover" sx={{ 'width': 200, 'height': 200 }}
             variant="outlined"
@@ -11,7 +13,7 @@ export default function ImageCard({ data = "", onClick = () => { } }) {
             onClick={onClick}>
             <CardMedia component="img"
                 sx={{ 'width': 200, 'height': 200 }}
-                image={`data:image/png;base64,${data}`} />
+                image={imageURL} />
         </Card >
     );
 }

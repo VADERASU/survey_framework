@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -7,35 +8,34 @@ from database.mongo import MongoWrapper
 from extract import data, utils
 from extract.tree import MetadataTree
 
+from .LaTexAccents import AccentConverter
+
 
 def main():
     parser = utils.build_parser()
     args = parser.parse_args()
-    dir, img_dir, icon_dir, name = utils.check_args(args)
-
-    client = MongoClient(serverSelectionTimeoutMS=2000)
-    try:
-        client.server_info()
-    except errors.ServerSelectionTimeoutError as err:
-        sys.exit(f"Error connecting to the database: {err}")
+    dir, img_dir, icon_dir, data_dir, name = utils.check_args(args)
 
     # survey defaults to the name of the directory
     survey_name = os.path.basename(dir)
     if name is not None:
         survey_name = name
 
-    db = MongoWrapper(client.surveys)
-    print(f"Update statistics for {survey_name}:\n")
-
     # TODO: test optional paper functionality
-    papers = data.load_bibtex(dir)
-    if papers is not None:
-        p_up, p_in = db.add_papers(papers.entries_dict, survey_name)
-        print(f"Updated {p_up} and inserted {p_in} papers.")
+    papers = data.load_bibtex(dir).entries_dict
+    converter = AccentConverter()
 
-    ck = db.get_cite_key_to_id(survey_name)
-    images = data.load_images(dir, img_dir, ck)
+    for paper, d in papers.items():
+        # assume accents will be in authors field
+        cleaned = converter.decode_Tex_Accents(d["author"], utf8_or_ascii=1)
+        d["author"] = utils.drop_braces(cleaned)
+        d["title"] = utils.drop_braces(utils.commands_to_utf8(d["title"]))
+        papers[paper] = d
 
+    images = data.load_images(dir, img_dir, set(papers.keys()))
+
+    print(img_dir)
+    print(icon_dir)
     # only need images if any one image array changes - hard to test for though
     # if images are updated, only need to check that all keywords are valid
     raw_md = data.load_toml(dir)
@@ -45,14 +45,24 @@ def main():
     data.map_image_keywords(images, md)
     data.load_icons(dir, icon_dir, md)
 
-    m_up, m_in = db.add_metadata(md, survey_name)
-    if m_up:
-        print("Metadata updated.")
-    else:
-        print("Metadata inserted." if m_in else "Metadata not modified.")
+    md = md.to_dict()
 
-    i_up, i_in = db.add_images(images, survey_name)
-    print(f"Updated {i_up} and inserted {i_in} images.")
+    icons = {}
+
+    def get_icon(children):
+        for child in children:
+            icons[child["name"]] = child["icon"]
+            get_icon(child["children"])
+
+    get_icon(md["children"])
+
+    # need to return a json dict of the following
+    j = json.dumps(
+        {"papers": papers, "images": images, "metadata": md, "icons": icons}
+    )
+
+    with open(data_dir.joinpath(f"{survey_name}.json"), "w") as f:
+        f.write(j)
 
 
 if __name__ == "__main__":
