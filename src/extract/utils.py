@@ -13,7 +13,7 @@ def section_names(d):
 
 def get_frontend_source_dir():
     source = Path(__file__).resolve()
-    dir = source.parent.parent.joinpath("api").joinpath("front").joinpath("src")
+    dir = source.parent.parent.joinpath("front").joinpath("src")
     return dir
 
 def get_default_dir(dir_name:str):

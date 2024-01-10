@@ -2,9 +2,6 @@ import json
 import os
 import sys
 
-from pymongo import MongoClient, errors
-
-from database.mongo import MongoWrapper
 from extract import data, utils
 from extract.tree import MetadataTree
 

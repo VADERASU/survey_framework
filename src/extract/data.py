@@ -5,7 +5,6 @@ from typing import Dict, List, Set, TypedDict
 
 import bibtexparser
 import toml
-from bson import ObjectId
 from typeguard import typechecked
 
 from extract import utils
