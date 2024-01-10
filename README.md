@@ -1,6 +1,6 @@
 # Survey Framework
-This is a Python framework intended to make building survey paper websites easier, inspired by [TreeVis](https://treevis.net). 
-The goal is to have an API that sets itself up using the papers you provide.
+This is a Python script intended to make building survey paper websites easier, inspired by [TreeVis](https://treevis.net). 
+The script sets up a React website that has basic search functionality and a clean interface.
 
 | component | completion |
 | --------- | ---------- |
@@ -8,8 +8,9 @@ The goal is to have an API that sets itself up using the papers you provide.
 | Backend API | ✔️   |
 | Frontend scaffolding | ✔️ |
 
-## Setup
-First, install all the python components using `poetry`, found 
+## Installation
+The easiest way to install this package is through [poetry](https://python-poetry.org/).
+With `poetry` installed, simply run `poetry install`.
 
 ## Extract 
 The extraction script, ran with `survey_extract`, reads a directory and extracts its contents to a mongoDB database.
@@ -67,11 +68,7 @@ and load the corresponding icon into the API's icon folder if found.
 Please note that icons *MUST* be SVG files. 
 If using Adobe Illustrator, make sure to export icons with "Styling" set to "Presentation Attributes".
 
-## Installation
-The easiest way to install this package is through [poetry](https://python-poetry.org/).
-With `poetry` installed, simply run `poetry install`.
-
-## Usage
+## Building the website 
 First, get your paper information and metadata in the format described in the *extract* section.
 Run the survey_extract executable - this place all of the assets (images, data, icons) in the front-end's source code. 
 
