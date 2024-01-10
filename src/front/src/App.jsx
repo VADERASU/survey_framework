@@ -15,7 +15,6 @@ import Filters from './components/Filters';
 import { getHeaders } from './api/utils';
 
 function App() {
-    // TODO: images can be served statically
     const [images, setImages] = useState([]);
     const [papers, setPapers] = useState({});
     const [metadata, setMetadata] = useState(null);

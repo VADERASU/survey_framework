@@ -73,11 +73,11 @@ With `poetry` installed, simply run `poetry install`.
 
 ## Usage
 First, get your paper information and metadata in the format described in the *extract* section.
-Run the survey_extract executable - this will set up the database and put all the pictures in the `images` folder for the back-end to read.
+Run the survey_extract executable - this place all of the assets (images, data, icons) in the front-end's source code. 
 
-Next, you need to compile the website. Edit `constants.js` to point to the name of the database you set up. Then, run `npm install` and `npm run build`. 
+Next, you need to compile the website. Edit `constants.js` to use the survey you extracted with the extraction script. Then, run `npm install` and `npm run build`. 
 
-Once that is complete, all you need to do is go to the root directory of this project (the one containing this readme file) and run `poetry run uvicorn --host 0.0.0.0`. The rest of the configuration (setting up ports, port forwarding etc) is up to you.
+Once that is complete, all you need to do is host the `dist` folder in `front` with a http server of your choice. 
 
 ## Contributing
 Install the development requirements with `poetry install --with dev`. 
